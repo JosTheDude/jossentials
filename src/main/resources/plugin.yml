@@ -1,0 +1,7 @@
+name: Jossentials
+version: '1.0'
+main: gg.jos.jossentials.Jossentials
+api-version: '1.21'
+authors: [ JosTheDude ]
+description: An all-in-one essentials core made to be easy-to-use for players.
+website: https://jos.gg/
