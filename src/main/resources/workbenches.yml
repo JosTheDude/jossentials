@@ -1,0 +1,73 @@
+# workbench command configuration
+workbenches:
+  crafting_table:
+    # enable command registration for this workbench
+    enabled: true
+    # commands that open this workbench (first entry is the primary label)
+    commands:
+      - craft
+      - crafting
+      - workbench
+      - craftingtable
+    # permission required to use these commands
+    permission: jossentials.workbench.crafting_table
+  anvil:
+    enabled: true
+    commands:
+      - anvil
+    permission: jossentials.workbench.anvil
+  cartography_table:
+    enabled: true
+    commands:
+      - cartography
+      - cartographytable
+    permission: jossentials.workbench.cartography_table
+  grindstone:
+    enabled: true
+    commands:
+      - grindstone
+    permission: jossentials.workbench.grindstone
+  loom:
+    enabled: true
+    commands:
+      - loom
+    permission: jossentials.workbench.loom
+  smithing_table:
+    enabled: true
+    commands:
+      - smithing
+      - smithingtable
+    permission: jossentials.workbench.smithing_table
+  stonecutter:
+    enabled: true
+    commands:
+      - stonecutter
+    permission: jossentials.workbench.stonecutter
+  enchanting_table:
+    enabled: true
+    commands:
+      - enchant
+      - enchanting
+      - enchantingtable
+    permission: jossentials.workbench.enchanting_table
+  brewing_stand:
+    enabled: true
+    commands:
+      - brew
+      - brewing
+    permission: jossentials.workbench.brewing_stand
+  furnace:
+    enabled: true
+    commands:
+      - furnace
+    permission: jossentials.workbench.furnace
+  blast_furnace:
+    enabled: true
+    commands:
+      - blastfurnace
+    permission: jossentials.workbench.blast_furnace
+  smoker:
+    enabled: true
+    commands:
+      - smoker
+    permission: jossentials.workbench.smoker

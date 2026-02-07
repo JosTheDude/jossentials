@@ -6,6 +6,7 @@ config-version: 1
 config-files:
   - homes.yml
   - tpa.yml
+  - workbenches.yml
   - messages.yml
 
 # database storage configuration
@@ -49,4 +50,7 @@ features:
     enabled: true
   tpa:
     # enable or disable the tpa feature
+    enabled: true
+  workbenches:
+    # enable or disable the workbenches feature
     enabled: true

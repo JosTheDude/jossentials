@@ -13,6 +13,7 @@ public final class ConfigManager {
     private FileConfiguration features;
     private FileConfiguration homes;
     private FileConfiguration tpa;
+    private FileConfiguration workbenches;
     private FileConfiguration messages;
 
     public ConfigManager(JavaPlugin plugin) {
@@ -25,6 +26,7 @@ public final class ConfigManager {
         features = plugin.getConfig();
         homes = loadConfig("homes.yml", "homes");
         tpa = loadConfig("tpa.yml", "tpa");
+        workbenches = loadConfig("workbenches.yml", "workbenches");
         messages = loadConfig("messages.yml", "messages");
     }
 
@@ -34,6 +36,7 @@ public final class ConfigManager {
         features = plugin.getConfig();
         homes = loadConfig("homes.yml", "homes");
         tpa = loadConfig("tpa.yml", "tpa");
+        workbenches = loadConfig("workbenches.yml", "workbenches");
         messages = loadConfig("messages.yml", "messages");
     }
 
@@ -51,6 +54,10 @@ public final class ConfigManager {
 
     public FileConfiguration tpa() {
         return tpa;
+    }
+
+    public FileConfiguration workbenches() {
+        return workbenches;
     }
 
     public FileConfiguration messages() {

@@ -42,10 +42,14 @@ homes:
         name: "<gray> "
         # lore lines for the ingredient item
         lore: []
+        # hide the vanilla tooltip for this item
+        hide-tooltip: true
       ".":
         material: AIR
         name: "<gray> "
         lore: []
+        # hide the vanilla tooltip for this item
+        hide-tooltip: true
     items:
       set:
         # item shown when a home is set
@@ -54,21 +58,29 @@ homes:
         lore:
           - "<#bac2de>Left-click to teleport."
           - "<#bac2de>Right-click to delete."
+        # hide the vanilla tooltip for this item
+        hide-tooltip: false
       empty:
         # item shown when the slot is empty
         material: GRAY_BED
         name: "<#6c7086>Empty Slot <#f9e2af>%slot%"
         lore:
           - "<#f9e2af>Click to set your home."
+        # hide the vanilla tooltip for this item
+        hide-tooltip: false
       locked:
         # item shown when the slot is locked and empty
         material: BARRIER
         name: "<#f38ba8>Locked Slot <#f9e2af>%slot%"
         lore:
           - "<#bac2de>Requires permission: <#f38ba8>%permission%"
+        # hide the vanilla tooltip for this item
+        hide-tooltip: false
       locked-set:
         # item shown when a home exists but permission is missing
         material: RED_BED
         name: "<#f38ba8>Home <#f9e2af>%slot%</#f9e2af> <#6c7086>(Locked)"
         lore:
           - "<#bac2de>You no longer have permission."
+        # hide the vanilla tooltip for this item
+        hide-tooltip: false

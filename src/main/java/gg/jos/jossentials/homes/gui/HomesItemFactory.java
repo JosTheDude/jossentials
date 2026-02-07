@@ -51,6 +51,11 @@ public final class HomesItemFactory {
                 }
                 meta.lore(lore);
             }
+            boolean hideTooltip = section.getBoolean("hide-tooltip", false);
+            try {
+                meta.getClass().getMethod("setHideTooltip", boolean.class).invoke(meta, hideTooltip);
+            } catch (Exception ignored) {
+            }
             item.setItemMeta(meta);
         }
         ItemProvider provider = new ItemWrapper(item);

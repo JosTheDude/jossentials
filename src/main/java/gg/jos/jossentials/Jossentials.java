@@ -9,6 +9,7 @@ import gg.jos.jossentials.homes.feature.HomesFeature;
 import gg.jos.jossentials.tpa.feature.TPAFeature;
 import gg.jos.jossentials.util.MessageDispatcher;
 import gg.jos.jossentials.util.SchedulerAdapter;
+import gg.jos.jossentials.workbenches.WorkbenchesFeature;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,6 +40,7 @@ public final class Jossentials extends JavaPlugin {
         featureManager = new FeatureManager();
         featureManager.register(new HomesFeature(this, database, commandManager, messageDispatcher));
         featureManager.register(new TPAFeature(this, commandManager, messageDispatcher));
+        featureManager.register(new WorkbenchesFeature(this, messageDispatcher));
         featureManager.enableConfigured();
         commandManager.registerCommand(new ReloadCommand(this, featureManager, messageDispatcher));
 
