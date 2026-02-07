@@ -3,12 +3,12 @@ package gg.jos.jossentials.tpa;
 import gg.jos.jossentials.Jossentials;
 import gg.jos.jossentials.tpa.teleport.TPATeleportService;
 import gg.jos.jossentials.util.MessageDispatcher;
+import gg.jos.jossentials.util.SchedulerAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Map;
 import java.util.UUID;
@@ -18,6 +18,7 @@ public final class TPARequestService implements Listener {
     private final Jossentials plugin;
     private final MessageDispatcher messageDispatcher;
     private final TPATeleportService teleportService;
+    private final SchedulerAdapter scheduler;
     private final Map<UUID, Map<UUID, PendingRequest>> pendingByTarget = new ConcurrentHashMap<>();
     private final Map<UUID, PendingRequest> pendingByRequester = new ConcurrentHashMap<>();
     private volatile TPASettings settings;
@@ -26,6 +27,7 @@ public final class TPARequestService implements Listener {
         this.plugin = plugin;
         this.messageDispatcher = messageDispatcher;
         this.teleportService = teleportService;
+        this.scheduler = plugin.scheduler();
         this.settings = settings;
     }
 
@@ -43,19 +45,19 @@ public final class TPARequestService implements Listener {
 
     private void request(Player requester, Player target, RequestType type) {
         if (requester.getUniqueId().equals(target.getUniqueId())) {
-            String message = plugin.getConfig().getString("messages.tpa-self", "<red>You cannot send a teleport request to yourself.");
+            String message = plugin.configs().messages().getString("messages.tpa-self", "<red>You cannot send a teleport request to yourself.");
             messageDispatcher.sendWithKey(requester, "messages.tpa-self", message);
             return;
         }
         if (pendingByRequester.containsKey(requester.getUniqueId())) {
-            String message = plugin.getConfig().getString("messages.tpa-already-pending", "<red>You already have a pending teleport request.");
+            String message = plugin.configs().messages().getString("messages.tpa-already-pending", "<red>You already have a pending teleport request.");
             messageDispatcher.sendWithKey(requester, "messages.tpa-already-pending", message);
             return;
         }
 
         Map<UUID, PendingRequest> incoming = pendingByTarget.computeIfAbsent(target.getUniqueId(), key -> new ConcurrentHashMap<>());
         if (incoming.containsKey(requester.getUniqueId())) {
-            String message = plugin.getConfig().getString("messages.tpa-already-pending", "<red>You already have a pending teleport request.");
+            String message = plugin.configs().messages().getString("messages.tpa-already-pending", "<red>You already have a pending teleport request.");
             messageDispatcher.sendWithKey(requester, "messages.tpa-already-pending", message);
             return;
         }
@@ -65,19 +67,18 @@ public final class TPARequestService implements Listener {
         incoming.put(request.requesterId, request);
 
         String sentKey = type == RequestType.HERE ? "messages.tpa-here-request-sent" : "messages.tpa-request-sent";
-        String sent = plugin.getConfig().getString(sentKey, "<green>Teleport request sent to <gold>%target%</gold>.");
+        String sent = plugin.configs().messages().getString(sentKey, "<green>Teleport request sent to <gold>%target%</gold>.");
         sent = applyPlaceholders(sent, request);
         messageDispatcher.sendWithKey(requester, sentKey, sent);
 
         String receivedKey = type == RequestType.HERE ? "messages.tpa-here-request-received" : "messages.tpa-request-received";
-        String received = plugin.getConfig().getString(receivedKey, "<gold>%requester%</gold> wants to teleport to you. Type <yellow>/tpaccept %requester%</yellow> to accept.");
+        String received = plugin.configs().messages().getString(receivedKey, "<gold>%requester%</gold> wants to teleport to you. Type <yellow>/tpaccept %requester%</yellow> to accept.");
         received = applyPlaceholders(received, request).replace("%seconds%", String.valueOf(settings.requestExpirySeconds));
         messageDispatcher.sendWithKey(target, receivedKey, received);
 
         int expirySeconds = Math.max(0, settings.requestExpirySeconds);
         if (expirySeconds > 0) {
-            BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, () -> expireRequest(request), expirySeconds * 20L);
-            request.task = task;
+            request.task = scheduler.runGlobalLater(() -> expireRequest(request), expirySeconds * 20L);
         }
     }
 
@@ -116,7 +117,7 @@ public final class TPARequestService implements Listener {
     public void cancel(Player requester) {
         PendingRequest request = pendingByRequester.get(requester.getUniqueId());
         if (request == null) {
-            String message = plugin.getConfig().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
+            String message = plugin.configs().messages().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
             messageDispatcher.sendWithKey(requester, "messages.tpa-no-pending", message);
             return;
         }
@@ -124,31 +125,31 @@ public final class TPARequestService implements Listener {
             return;
         }
 
-        String cancelledRequester = plugin.getConfig().getString("messages.tpa-request-cancelled", "<red>Teleport request cancelled.");
+        String cancelledRequester = plugin.configs().messages().getString("messages.tpa-request-cancelled", "<red>Teleport request cancelled.");
         messageDispatcher.sendWithKey(requester, "messages.tpa-request-cancelled", applyPlaceholders(cancelledRequester, request));
 
         Player target = Bukkit.getPlayer(request.targetId);
         if (target != null && target.isOnline()) {
-            String cancelledTarget = plugin.getConfig().getString("messages.tpa-request-cancelled-target", "<red>Teleport request from <gold>%requester%</gold> was cancelled.");
+            String cancelledTarget = plugin.configs().messages().getString("messages.tpa-request-cancelled-target", "<red>Teleport request from <gold>%requester%</gold> was cancelled.");
             messageDispatcher.sendWithKey(target, "messages.tpa-request-cancelled-target", applyPlaceholders(cancelledTarget, request));
         }
     }
 
     private PendingRequest findRequest(Player target, Player requester) {
         if (requester == null) {
-            String message = plugin.getConfig().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
+            String message = plugin.configs().messages().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
             messageDispatcher.sendWithKey(target, "messages.tpa-no-pending", message);
             return null;
         }
         Map<UUID, PendingRequest> incoming = pendingByTarget.get(target.getUniqueId());
         if (incoming == null || incoming.isEmpty()) {
-            String message = plugin.getConfig().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
+            String message = plugin.configs().messages().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
             messageDispatcher.sendWithKey(target, "messages.tpa-no-pending", message);
             return null;
         }
         PendingRequest request = incoming.get(requester.getUniqueId());
         if (request == null) {
-            String message = plugin.getConfig().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
+            String message = plugin.configs().messages().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
             messageDispatcher.sendWithKey(target, "messages.tpa-no-pending", message);
             return null;
         }
@@ -158,12 +159,12 @@ public final class TPARequestService implements Listener {
     private PendingRequest findSingleRequest(Player target) {
         Map<UUID, PendingRequest> incoming = pendingByTarget.get(target.getUniqueId());
         if (incoming == null || incoming.isEmpty()) {
-            String message = plugin.getConfig().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
+            String message = plugin.configs().messages().getString("messages.tpa-no-pending", "<red>You have no pending teleport requests.");
             messageDispatcher.sendWithKey(target, "messages.tpa-no-pending", message);
             return null;
         }
         if (incoming.size() > 1) {
-            String message = plugin.getConfig().getString("messages.tpa-multiple-pending", "<yellow>Multiple requests pending. Use <gold>/tpaccept <player></gold>.");
+            String message = plugin.configs().messages().getString("messages.tpa-multiple-pending", "<yellow>Multiple requests pending. Use <gold>/tpaccept <player></gold>.");
             messageDispatcher.sendWithKey(target, "messages.tpa-multiple-pending", message);
             return null;
         }
@@ -177,15 +178,15 @@ public final class TPARequestService implements Listener {
 
         Player requesterPlayer = Bukkit.getPlayer(request.requesterId);
         if (requesterPlayer == null || !requesterPlayer.isOnline()) {
-            String message = plugin.getConfig().getString("messages.tpa-request-expired-target", "<red>That teleport request has expired.");
+            String message = plugin.configs().messages().getString("messages.tpa-request-expired-target", "<red>That teleport request has expired.");
             messageDispatcher.sendWithKey(target, "messages.tpa-request-expired-target", applyPlaceholders(message, request));
             return;
         }
 
-        String acceptedRequester = plugin.getConfig().getString("messages.tpa-request-accepted", "<green>Your teleport request was accepted.");
+        String acceptedRequester = plugin.configs().messages().getString("messages.tpa-request-accepted", "<green>Your teleport request was accepted.");
         messageDispatcher.sendWithKey(requesterPlayer, "messages.tpa-request-accepted", applyPlaceholders(acceptedRequester, request));
 
-        String acceptedTarget = plugin.getConfig().getString("messages.tpa-request-accepted-target", "<green>Accepted teleport request from <gold>%requester%</gold>.");
+        String acceptedTarget = plugin.configs().messages().getString("messages.tpa-request-accepted-target", "<green>Accepted teleport request from <gold>%requester%</gold>.");
         messageDispatcher.sendWithKey(target, "messages.tpa-request-accepted-target", applyPlaceholders(acceptedTarget, request));
 
         if (request.type == RequestType.HERE) {
@@ -202,11 +203,11 @@ public final class TPARequestService implements Listener {
 
         Player requesterPlayer = Bukkit.getPlayer(request.requesterId);
         if (requesterPlayer != null && requesterPlayer.isOnline()) {
-            String message = plugin.getConfig().getString("messages.tpa-request-denied", "<red>Your teleport request was denied.");
+            String message = plugin.configs().messages().getString("messages.tpa-request-denied", "<red>Your teleport request was denied.");
             messageDispatcher.sendWithKey(requesterPlayer, "messages.tpa-request-denied", applyPlaceholders(message, request));
         }
 
-        String deniedTarget = plugin.getConfig().getString("messages.tpa-request-denied-target", "<red>Denied teleport request from <gold>%requester%</gold>.");
+        String deniedTarget = plugin.configs().messages().getString("messages.tpa-request-denied-target", "<red>Denied teleport request from <gold>%requester%</gold>.");
         messageDispatcher.sendWithKey(target, "messages.tpa-request-denied-target", applyPlaceholders(deniedTarget, request));
     }
 
@@ -235,14 +236,14 @@ public final class TPARequestService implements Listener {
         }
         Player requester = Bukkit.getPlayer(request.requesterId);
         if (requester != null && requester.isOnline()) {
-            String message = plugin.getConfig().getString("messages.tpa-request-expired", "<red>Your teleport request expired.");
-            messageDispatcher.sendWithKey(requester, "messages.tpa-request-expired", applyPlaceholders(message, request));
+            String message = plugin.configs().messages().getString("messages.tpa-request-expired", "<red>Your teleport request expired.");
+            scheduler.runEntity(requester, () -> messageDispatcher.sendWithKey(requester, "messages.tpa-request-expired", applyPlaceholders(message, request)));
         }
 
         Player target = Bukkit.getPlayer(request.targetId);
         if (target != null && target.isOnline()) {
-            String message = plugin.getConfig().getString("messages.tpa-request-expired-target", "<red>Teleport request from <gold>%requester%</gold> expired.");
-            messageDispatcher.sendWithKey(target, "messages.tpa-request-expired-target", applyPlaceholders(message, request));
+            String message = plugin.configs().messages().getString("messages.tpa-request-expired-target", "<red>Teleport request from <gold>%requester%</gold> expired.");
+            scheduler.runEntity(target, () -> messageDispatcher.sendWithKey(target, "messages.tpa-request-expired-target", applyPlaceholders(message, request)));
         }
     }
 
@@ -264,7 +265,7 @@ public final class TPARequestService implements Listener {
         if (outgoing != null && removeRequest(outgoing)) {
             Player target = Bukkit.getPlayer(outgoing.targetId);
             if (target != null && target.isOnline()) {
-                String cancelledTarget = plugin.getConfig().getString("messages.tpa-request-cancelled-target", "<red>Teleport request from <gold>%requester%</gold> was cancelled.");
+                String cancelledTarget = plugin.configs().messages().getString("messages.tpa-request-cancelled-target", "<red>Teleport request from <gold>%requester%</gold> was cancelled.");
                 messageDispatcher.sendWithKey(target, "messages.tpa-request-cancelled-target", applyPlaceholders(cancelledTarget, outgoing));
             }
         }
@@ -280,7 +281,7 @@ public final class TPARequestService implements Listener {
             }
             Player requester = Bukkit.getPlayer(request.requesterId);
             if (requester != null && requester.isOnline()) {
-                String cancelledRequester = plugin.getConfig().getString("messages.tpa-request-cancelled", "<red>Teleport request cancelled.");
+                String cancelledRequester = plugin.configs().messages().getString("messages.tpa-request-cancelled", "<red>Teleport request cancelled.");
                 messageDispatcher.sendWithKey(requester, "messages.tpa-request-cancelled", applyPlaceholders(cancelledRequester, request));
             }
         }
@@ -298,7 +299,7 @@ public final class TPARequestService implements Listener {
         private final UUID targetId;
         private final String targetName;
         private final RequestType type;
-        private BukkitTask task;
+        private SchedulerAdapter.TaskHandle task;
 
         private PendingRequest(UUID requesterId, String requesterName, UUID targetId, String targetName, RequestType type) {
             this.requesterId = requesterId;

@@ -5,7 +5,6 @@ import gg.jos.jossentials.homes.HomeLocation;
 import gg.jos.jossentials.homes.HomesService;
 import gg.jos.jossentials.homes.HomesSettings;
 import gg.jos.jossentials.util.ColorUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import xyz.xenondevs.invui.gui.Gui;
@@ -47,7 +46,7 @@ public final class HomesGui {
         messageDispatcher.send(player, "messages.loading", "");
         UUID playerId = player.getUniqueId();
         homesService.loadHomes(playerId).whenComplete((homes, throwable) -> {
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            plugin.scheduler().runEntity(player, () -> {
                 if (!player.isOnline()) {
                     return;
                 }
@@ -58,7 +57,7 @@ public final class HomesGui {
                 Gui gui = buildGui(player, homes);
                 Window window = Window.builder()
                     .setViewer(player)
-                    .setTitle(ColorUtil.mini(plugin.getConfig().getString("homes.gui.title", "<gold>Homes")))
+                    .setTitle(ColorUtil.mini(plugin.configs().homes().getString("homes.gui.title", "<gold>Homes")))
                     .setUpperGui(gui)
                     .build();
                 window.open();
@@ -72,9 +71,9 @@ public final class HomesGui {
     }
 
     private Gui buildGui(Player player, Map<Integer, HomeLocation> homes) {
-        List<String> rawStructure = plugin.getConfig().getStringList("homes.gui.structure");
+        List<String> rawStructure = plugin.configs().homes().getStringList("homes.gui.structure");
         boolean hasStructure = rawStructure != null && !rawStructure.isEmpty();
-        int rows = hasStructure ? rawStructure.size() : normalizedSize(plugin.getConfig().getInt("homes.gui.size", 27)) / 9;
+        int rows = hasStructure ? rawStructure.size() : normalizedSize(plugin.configs().homes().getInt("homes.gui.size", 27)) / 9;
         int size = rows * 9;
         List<String> structure = normalizeStructure(rawStructure, rows);
         Set<Character> structureChars = collectStructureChars(structure);
@@ -93,9 +92,9 @@ public final class HomesGui {
         Gui gui = builder.build();
 
         List<Integer> homeSlots = resolveHomeSlots(rawStructure, size);
-        int maxSlots = plugin.getConfig().getInt("homes.max-slots", 5);
+        int maxSlots = plugin.configs().homes().getInt("homes.max-slots", 5);
         maxSlots = Math.min(maxSlots, homeSlots.size());
-        boolean showLocked = plugin.getConfig().getBoolean("homes.gui.show-locked-slots", true);
+        boolean showLocked = plugin.configs().homes().getBoolean("homes.gui.show-locked-slots", true);
 
         for (int i = 0; i < maxSlots; i++) {
             int slotNumber = i + 1;
@@ -127,7 +126,7 @@ public final class HomesGui {
 
     private Map<Character, Item> buildIngredientMap() {
         Map<Character, Item> items = new HashMap<>();
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection("homes.gui.ingredients");
+        ConfigurationSection section = plugin.configs().homes().getConfigurationSection("homes.gui.ingredients");
         if (section == null) {
             return items;
         }
@@ -143,15 +142,15 @@ public final class HomesGui {
     }
 
     private List<Integer> resolveHomeSlots(List<String> rawStructure, int size) {
-        List<Integer> homeSlots = plugin.getConfig().getIntegerList("homes.gui.home-slots");
+        List<Integer> homeSlots = plugin.configs().homes().getIntegerList("homes.gui.home-slots");
         if (homeSlots.isEmpty()) {
-            homeSlots = plugin.getConfig().getIntegerList("homes.gui.slot-indices");
+            homeSlots = plugin.configs().homes().getIntegerList("homes.gui.slot-indices");
         }
         if (homeSlots.isEmpty() && rawStructure != null && !rawStructure.isEmpty()) {
             homeSlots = extractHomeSlotsFromStructure(rawStructure, size);
         }
         if (homeSlots.isEmpty()) {
-            int maxSlots = plugin.getConfig().getInt("homes.max-slots", 5);
+            int maxSlots = plugin.configs().homes().getInt("homes.max-slots", 5);
             maxSlots = Math.min(maxSlots, size);
             for (int i = 0; i < maxSlots; i++) {
                 homeSlots.add(i);

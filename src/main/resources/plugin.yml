@@ -3,7 +3,7 @@ version: '${version}'
 main: gg.jos.jossentials.Jossentials
 api-version: '1.21'
 authors: [ JosTheDude ]
-description: An all-in-one essentials core made to be easy-to-use for players.
+description:  A modular, configurable, and extremely intuitive all-in-one command core for awesome servers.
 website: https://jos.gg/
 
 commands:

@@ -5,7 +5,7 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
+import gg.jos.jossentials.Jossentials;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -13,16 +13,16 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class MessageDispatcher {
-    private final JavaPlugin plugin;
+    private final Jossentials plugin;
     private volatile DeliverySettings settings;
 
-    public MessageDispatcher(JavaPlugin plugin) {
+    public MessageDispatcher(Jossentials plugin) {
         this.plugin = plugin;
         reload();
     }
 
     public void send(Player player, String messageKey, String fallbackMessage) {
-        String message = plugin.getConfig().getString(messageKey, fallbackMessage);
+        String message = plugin.configs().messages().getString(messageKey, fallbackMessage);
         sendWithKey(player, messageKey, message);
     }
 
@@ -58,7 +58,7 @@ public final class MessageDispatcher {
     }
 
     public void reload() {
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection("messages.delivery");
+        ConfigurationSection section = plugin.configs().messages().getConfigurationSection("messages.delivery");
         String type = section != null ? section.getString("type", "message") : "message";
 
         String subtitleRaw = section != null ? section.getString("title.subtitle", "") : "";
@@ -87,7 +87,7 @@ public final class MessageDispatcher {
             }
         }
 
-        SoundSettings soundSettings = loadSoundSettings(plugin.getConfig().getConfigurationSection("messages.sounds"));
+        SoundSettings soundSettings = loadSoundSettings(plugin.configs().messages().getConfigurationSection("messages.sounds"));
 
         settings = new DeliverySettings(type, subtitle, times, overrides, soundSettings);
     }

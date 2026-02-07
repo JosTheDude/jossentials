@@ -18,7 +18,7 @@ public final class Database {
 
     public Database(Jossentials plugin) {
         this.plugin = plugin;
-        String rawType = plugin.getConfig().getString("database.type", "sqlite");
+        String rawType = plugin.configs().database().getString("database.type", "sqlite");
         this.type = "mysql".equalsIgnoreCase(rawType) ? DatabaseType.MYSQL : DatabaseType.SQLITE;
         loadDriver();
         this.dataSource = createDataSource();
@@ -53,12 +53,12 @@ public final class Database {
     private HikariDataSource createDataSource() {
         HikariConfig config = new HikariConfig();
         if (type == DatabaseType.MYSQL) {
-            String host = plugin.getConfig().getString("database.mysql.host", "localhost");
-            int port = plugin.getConfig().getInt("database.mysql.port", 3306);
-            String database = plugin.getConfig().getString("database.mysql.database", "jossentials");
-            boolean useSsl = plugin.getConfig().getBoolean("database.mysql.use-ssl", false);
-            String username = plugin.getConfig().getString("database.mysql.username", "root");
-            String password = plugin.getConfig().getString("database.mysql.password", "");
+            String host = plugin.configs().database().getString("database.mysql.host", "localhost");
+            int port = plugin.configs().database().getInt("database.mysql.port", 3306);
+            String database = plugin.configs().database().getString("database.mysql.database", "jossentials");
+            boolean useSsl = plugin.configs().database().getBoolean("database.mysql.use-ssl", false);
+            String username = plugin.configs().database().getString("database.mysql.username", "root");
+            String password = plugin.configs().database().getString("database.mysql.password", "");
             String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + database
                 + "?useSSL=" + useSsl
                 + "&allowPublicKeyRetrieval=true"
@@ -67,8 +67,8 @@ public final class Database {
             config.setUsername(username);
             config.setPassword(password);
         } else {
-            String fileName = plugin.getConfig().getString("database.sqlite.file", "homes.db");
-            long busyTimeoutMs = plugin.getConfig().getLong("database.sqlite.busy-timeout-ms", 5000L);
+            String fileName = plugin.configs().database().getString("database.sqlite.file", "homes.db");
+            long busyTimeoutMs = plugin.configs().database().getLong("database.sqlite.busy-timeout-ms", 5000L);
             File file = new File(plugin.getDataFolder(), fileName);
             config.setJdbcUrl("jdbc:sqlite:" + file.getAbsolutePath());
             config.addDataSourceProperty("busy_timeout", String.valueOf(Math.max(0L, busyTimeoutMs)));
@@ -79,17 +79,17 @@ public final class Database {
             config.setMaximumPoolSize(1);
             config.setMinimumIdle(1);
         } else {
-            config.setMaximumPoolSize(plugin.getConfig().getInt("database.pool.maximum-pool-size", 10));
-            config.setMinimumIdle(plugin.getConfig().getInt("database.pool.minimum-idle", 2));
+            config.setMaximumPoolSize(plugin.configs().database().getInt("database.pool.maximum-pool-size", 10));
+            config.setMinimumIdle(plugin.configs().database().getInt("database.pool.minimum-idle", 2));
         }
         config.setConnectionTimeout(
-            TimeUnit.SECONDS.toMillis(plugin.getConfig().getLong("database.pool.connection-timeout-seconds", 10))
+            TimeUnit.SECONDS.toMillis(plugin.configs().database().getLong("database.pool.connection-timeout-seconds", 10))
         );
         config.setIdleTimeout(
-            TimeUnit.SECONDS.toMillis(plugin.getConfig().getLong("database.pool.idle-timeout-seconds", 600))
+            TimeUnit.SECONDS.toMillis(plugin.configs().database().getLong("database.pool.idle-timeout-seconds", 600))
         );
         config.setMaxLifetime(
-            TimeUnit.MINUTES.toMillis(plugin.getConfig().getLong("database.pool.max-lifetime-minutes", 30))
+            TimeUnit.MINUTES.toMillis(plugin.configs().database().getLong("database.pool.max-lifetime-minutes", 30))
         );
 
         if (type == DatabaseType.MYSQL) {

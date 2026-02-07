@@ -27,7 +27,7 @@ public final class HomesItemFactory {
         if (cached != null) {
             return cached;
         }
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection(path);
+        ConfigurationSection section = plugin.configs().homes().getConfigurationSection(path);
         if (section == null) {
             return ItemProvider.EMPTY;
         }

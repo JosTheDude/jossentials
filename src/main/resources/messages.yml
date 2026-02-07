@@ -1,0 +1,120 @@
+# messages and sound configuration
+messages:
+  delivery:
+    # message | actionbar | title
+    type: message
+    title:
+      # subtitle line for title delivery
+      subtitle: ""
+      # title fade in duration in ticks
+      fade-in-ticks: 10
+      # title stay duration in ticks
+      stay-ticks: 40
+      # title fade out duration in ticks
+      fade-out-ticks: 10
+    overrides:
+      # per-message delivery overrides
+      # home-teleport-warmup: actionbar
+      # home-teleport-cancelled: actionbar
+  sounds:
+    # enable or disable all sounds
+    enabled: true
+    default:
+      # default sound name (use "none" to disable)
+      name: UI_BUTTON_CLICK
+      # default sound volume
+      volume: 0.8
+      # default sound pitch
+      pitch: 1.0
+    overrides:
+      # sound overrides by message key
+      loading:
+        name: UI_BUTTON_CLICK
+        volume: 0.6
+        pitch: 1.2
+      database-error:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
+      no-permission:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
+      home-set:
+        name: BLOCK_NOTE_BLOCK_PLING
+        volume: 0.9
+        pitch: 1.6
+      home-set-failed:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
+      home-deleted:
+        name: BLOCK_NOTE_BLOCK_PLING
+        volume: 0.8
+        pitch: 1.2
+      home-delete-failed:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
+      home-delete-confirm:
+        name: BLOCK_NOTE_BLOCK_HAT
+        volume: 0.6
+        pitch: 1.4
+      home-teleported:
+        name: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.7
+        pitch: 1.0
+      home-teleport-warmup:
+        name: BLOCK_NOTE_BLOCK_CHIME
+        volume: 0.6
+        pitch: 1.2
+      home-teleport-cancelled:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
+      world-missing:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
+      reload:
+        name: BLOCK_NOTE_BLOCK_PLING
+        volume: 0.8
+        pitch: 1.3
+      feature-disabled:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
+  # placeholder-capable message strings
+  loading: "<#bac2de>Loading your homes..."
+  database-error: "<#f38ba8>Could not load homes right now."
+  no-permission: "<#f38ba8>You do not have permission."
+  home-set: "<#a6e3a1>Home <#f9e2af>%slot%</#f9e2af> set."
+  home-set-failed: "<#f38ba8>Failed to set home."
+  home-deleted: "<#a6e3a1>Home <#f9e2af>%slot%</#f9e2af> deleted."
+  home-delete-failed: "<#f38ba8>Failed to delete home."
+  home-delete-confirm: "<#f9e2af>Right-click again within <#cba6f7>%seconds%s</#cba6f7> to delete home <#f9e2af>%slot%</#f9e2af>."
+  home-teleported: "<#a6e3a1>Teleported to home <#f9e2af>%slot%</#f9e2af>."
+  home-teleport-warmup: "<#f9e2af>Teleporting in <#cba6f7>%seconds%s</#cba6f7>..."
+  home-teleport-cancelled: "<#f38ba8>Teleport cancelled."
+  world-missing: "<#f38ba8>That world is no longer available."
+  tpa-self: "<#f38ba8>You cannot send a teleport request to yourself."
+  tpa-already-pending: "<#f38ba8>You already have a pending teleport request."
+  tpa-request-sent: "<#a6e3a1>Teleport request sent to <#f9e2af>%target%</#f9e2af>."
+  tpa-request-received: "<#f9e2af>%requester%</#f9e2af> wants to teleport to you. Type <#cba6f7>/tpaccept %requester%</#cba6f7>."
+  tpa-here-request-sent: "<#a6e3a1>Teleport-here request sent to <#f9e2af>%target%</#f9e2af>."
+  tpa-here-request-received: "<#f9e2af>%requester%</#f9e2af> wants you to teleport to them. Type <#cba6f7>/tpaccept %requester%</#cba6f7>."
+  tpa-request-accepted: "<#a6e3a1>Your teleport request was accepted."
+  tpa-request-accepted-target: "<#a6e3a1>Accepted teleport request from <#f9e2af>%requester%</#f9e2af>."
+  tpa-request-denied: "<#f38ba8>Your teleport request was denied."
+  tpa-request-denied-target: "<#f38ba8>Denied teleport request from <#f9e2af>%requester%</#f9e2af>."
+  tpa-request-cancelled: "<#f38ba8>Teleport request cancelled."
+  tpa-request-cancelled-target: "<#f38ba8>Teleport request from <#f9e2af>%requester%</#f9e2af> was cancelled."
+  tpa-request-expired: "<#f38ba8>Your teleport request expired."
+  tpa-request-expired-target: "<#f38ba8>Teleport request from <#f9e2af>%requester%</#f9e2af> expired."
+  tpa-no-pending: "<#f38ba8>You have no pending teleport requests."
+  tpa-multiple-pending: "<#f9e2af>Multiple requests pending. Use <#cba6f7>/tpaccept <player></#cba6f7>."
+  tpa-teleport-warmup: "<#f9e2af>Teleporting to <#cba6f7>%target%</#cba6f7> in <#cba6f7>%seconds%s</#cba6f7>..."
+  tpa-teleported: "<#a6e3a1>Teleported to <#f9e2af>%target%</#f9e2af>."
+  tpa-teleport-cancelled: "<#f38ba8>Teleport cancelled."
+  reload: "<#a6e3a1>Jossentials reloaded."
+  feature-disabled: "<#f38ba8><i>This feature is disabled.</i>"

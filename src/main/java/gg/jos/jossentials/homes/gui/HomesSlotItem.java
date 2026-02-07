@@ -6,7 +6,6 @@ import gg.jos.jossentials.homes.HomesService;
 import gg.jos.jossentials.homes.HomesSettings;
 import gg.jos.jossentials.homes.teleport.HomesTeleportService;
 import gg.jos.jossentials.homes.util.DeleteConfirmationManager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import xyz.xenondevs.invui.Click;
@@ -77,7 +76,7 @@ public final class HomesSlotItem extends AbstractItem {
         if (existing == null) {
             HomeLocation location = HomeLocation.fromLocation(player.getLocation());
             homesService.setHome(player.getUniqueId(), slot, location).whenComplete((success, throwable) -> {
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                plugin.scheduler().runEntity(player, () -> {
                     if (!player.isOnline()) {
                         return;
                     }
@@ -87,7 +86,7 @@ public final class HomesSlotItem extends AbstractItem {
                     }
                     homes.put(slot, location);
                     notifyWindows();
-                    String message = plugin.getConfig().getString("messages.home-set", "<green>Home <gold>%slot%</gold> set.");
+                    String message = plugin.configs().messages().getString("messages.home-set", "<green>Home <gold>%slot%</gold> set.");
                     messageDispatcher.sendWithKey(player, "messages.home-set", message.replace("%slot%", String.valueOf(slot)));
                 });
             });
@@ -97,7 +96,7 @@ public final class HomesSlotItem extends AbstractItem {
             if (settings.deleteConfirmationEnabled) {
                 int windowSeconds = settings.deleteConfirmationWindowSeconds;
                 if (!deleteConfirmationManager.confirm(player.getUniqueId(), slot, windowSeconds * 1000L)) {
-                    String message = plugin.getConfig().getString("messages.home-delete-confirm", "<yellow>Right-click again to delete.");
+                    String message = plugin.configs().messages().getString("messages.home-delete-confirm", "<yellow>Right-click again to delete.");
                     message = message.replace("%seconds%", String.valueOf(windowSeconds))
                         .replace("%slot%", String.valueOf(slot));
                     messageDispatcher.sendWithKey(player, "messages.home-delete-confirm", message);
@@ -105,7 +104,7 @@ public final class HomesSlotItem extends AbstractItem {
                 }
             }
             homesService.deleteHome(player.getUniqueId(), slot).whenComplete((success, throwable) -> {
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                plugin.scheduler().runEntity(player, () -> {
                     if (!player.isOnline()) {
                         return;
                     }
@@ -116,7 +115,7 @@ public final class HomesSlotItem extends AbstractItem {
                     homes.remove(slot);
                     deleteConfirmationManager.clear(player.getUniqueId(), slot);
                     notifyWindows();
-                    String message = plugin.getConfig().getString("messages.home-deleted", "<green>Home <gold>%slot%</gold> deleted.");
+                    String message = plugin.configs().messages().getString("messages.home-deleted", "<green>Home <gold>%slot%</gold> deleted.");
                     messageDispatcher.sendWithKey(player, "messages.home-deleted", message.replace("%slot%", String.valueOf(slot)));
                 });
             });

@@ -42,7 +42,7 @@ public final class HomesFeature implements Feature {
 
     @Override
     public boolean isEnabledFromConfig() {
-        return plugin.getConfig().getBoolean("features.homes.enabled", true);
+        return plugin.configs().features().getBoolean("features.homes.enabled", true);
     }
 
     @Override
@@ -55,7 +55,7 @@ public final class HomesFeature implements Feature {
         if (enabled) {
             return;
         }
-        settings = HomesSettings.fromConfig(plugin.getConfig());
+        settings = HomesSettings.fromConfig(plugin.configs().homes());
         homesService = new HomesService(plugin, database);
         deleteConfirmationManager = new DeleteConfirmationManager();
         teleportService = new HomesTeleportService(plugin, messageDispatcher, settings);
@@ -91,7 +91,7 @@ public final class HomesFeature implements Feature {
         if (!enabled) {
             return;
         }
-        settings = HomesSettings.fromConfig(plugin.getConfig());
+        settings = HomesSettings.fromConfig(plugin.configs().homes());
         if (teleportService != null) {
             teleportService.updateSettings(settings);
         }
@@ -102,7 +102,7 @@ public final class HomesFeature implements Feature {
 
     public void open(Player player) {
         if (!enabled || homesGui == null) {
-            String message = plugin.getConfig().getString("messages.feature-disabled", "<red>This feature is disabled.");
+            String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(player, "messages.feature-disabled", message.replace("%feature%", "homes"));
             return;
         }

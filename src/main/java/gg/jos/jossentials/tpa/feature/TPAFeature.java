@@ -39,7 +39,7 @@ public final class TPAFeature implements Feature {
 
     @Override
     public boolean isEnabledFromConfig() {
-        return plugin.getConfig().getBoolean("features.tpa.enabled", true);
+        return plugin.configs().features().getBoolean("features.tpa.enabled", true);
     }
 
     @Override
@@ -52,7 +52,7 @@ public final class TPAFeature implements Feature {
         if (enabled) {
             return;
         }
-        settings = TPASettings.fromConfig(plugin.getConfig());
+        settings = TPASettings.fromConfig(plugin.configs().tpa());
         teleportService = new TPATeleportService(plugin, messageDispatcher, settings);
         requestService = new TPARequestService(plugin, messageDispatcher, teleportService, settings);
         if (!commandsRegistered) {
@@ -91,7 +91,7 @@ public final class TPAFeature implements Feature {
         if (!enabled) {
             return;
         }
-        settings = TPASettings.fromConfig(plugin.getConfig());
+        settings = TPASettings.fromConfig(plugin.configs().tpa());
         if (teleportService != null) {
             teleportService.updateSettings(settings);
         }
@@ -102,7 +102,7 @@ public final class TPAFeature implements Feature {
 
     public void request(Player requester, Player target) {
         if (!enabled || requestService == null) {
-            String message = plugin.getConfig().getString("messages.feature-disabled", "<red>This feature is disabled.");
+            String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(requester, "messages.feature-disabled", message.replace("%feature%", "TPA"));
             return;
         }
@@ -111,7 +111,7 @@ public final class TPAFeature implements Feature {
 
     public void requestHere(Player requester, Player target) {
         if (!enabled || requestService == null) {
-            String message = plugin.getConfig().getString("messages.feature-disabled", "<red>This feature is disabled.");
+            String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(requester, "messages.feature-disabled", message.replace("%feature%", "TPA"));
             return;
         }
@@ -120,7 +120,7 @@ public final class TPAFeature implements Feature {
 
     public void accept(Player target, Player requester) {
         if (!enabled || requestService == null) {
-            String message = plugin.getConfig().getString("messages.feature-disabled", "<red>This feature is disabled.");
+            String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(target, "messages.feature-disabled", message.replace("%feature%", "TPA"));
             return;
         }
@@ -129,7 +129,7 @@ public final class TPAFeature implements Feature {
 
     public void acceptSingle(Player target) {
         if (!enabled || requestService == null) {
-            String message = plugin.getConfig().getString("messages.feature-disabled", "<red>This feature is disabled.");
+            String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(target, "messages.feature-disabled", message.replace("%feature%", "TPA"));
             return;
         }
@@ -138,7 +138,7 @@ public final class TPAFeature implements Feature {
 
     public void deny(Player target, Player requester) {
         if (!enabled || requestService == null) {
-            String message = plugin.getConfig().getString("messages.feature-disabled", "<red>This feature is disabled.");
+            String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(target, "messages.feature-disabled", message.replace("%feature%", "TPA"));
             return;
         }
@@ -147,7 +147,7 @@ public final class TPAFeature implements Feature {
 
     public void denySingle(Player target) {
         if (!enabled || requestService == null) {
-            String message = plugin.getConfig().getString("messages.feature-disabled", "<red>This feature is disabled.");
+            String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(target, "messages.feature-disabled", message.replace("%feature%", "TPA"));
             return;
         }
@@ -156,7 +156,7 @@ public final class TPAFeature implements Feature {
 
     public void cancel(Player requester) {
         if (!enabled || requestService == null) {
-            String message = plugin.getConfig().getString("messages.feature-disabled", "<red>This feature is disabled.");
+            String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(requester, "messages.feature-disabled", message.replace("%feature%", "TPA"));
             return;
         }

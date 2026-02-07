@@ -11,19 +11,21 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import gg.jos.jossentials.teleport.WarmupTeleportManager;
-import org.bukkit.Bukkit;
+import gg.jos.jossentials.util.SchedulerAdapter;
 
 import java.util.UUID;
 
 public final class HomesTeleportService implements Listener {
     private final Jossentials plugin;
     private final MessageDispatcher messageDispatcher;
+    private final SchedulerAdapter scheduler;
     private final WarmupTeleportManager warmupManager;
     private volatile HomesSettings settings;
 
     public HomesTeleportService(Jossentials plugin, MessageDispatcher messageDispatcher, HomesSettings settings) {
         this.plugin = plugin;
         this.messageDispatcher = messageDispatcher;
+        this.scheduler = plugin.scheduler();
         this.settings = settings;
         this.warmupManager = new WarmupTeleportManager(plugin, () -> this.settings, this::notifyCancelled);
     }
@@ -38,9 +40,11 @@ public final class HomesTeleportService implements Listener {
         }
         HomesSettings current = settings;
         if (!current.warmupEnabled() || player.hasPermission(current.bypassPermission())) {
-            player.teleport(destination);
-            String message = plugin.getConfig().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
-            messageDispatcher.sendWithKey(player, "messages.home-teleported", message.replace("%slot%", String.valueOf(slot)));
+            scheduler.runEntity(player, () -> {
+                player.teleport(destination);
+                String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
+                messageDispatcher.sendWithKey(player, "messages.home-teleported", message.replace("%slot%", String.valueOf(slot)));
+            });
             return;
         }
 
@@ -49,23 +53,29 @@ public final class HomesTeleportService implements Listener {
             destination,
             slot,
             pending -> {
-                Player currentPlayer = Bukkit.getPlayer(pending.playerId());
+                Player currentPlayer = plugin.getServer().getPlayer(pending.playerId());
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                String warmupMessage = plugin.getConfig().getString("messages.home-teleport-warmup", "<yellow>Teleporting in <gold>%seconds%</gold>s...");
+            },
+            (pending, secondsLeft) -> {
+                Player currentPlayer = plugin.getServer().getPlayer(pending.playerId());
+                if (currentPlayer == null || !currentPlayer.isOnline()) {
+                    return;
+                }
+                String warmupMessage = plugin.configs().messages().getString("messages.home-teleport-warmup", "<yellow>Teleporting in <gold>%seconds%</gold>s...");
                 warmupMessage = warmupMessage
-                    .replace("%seconds%", String.valueOf(current.warmupSeconds()))
+                    .replace("%seconds%", String.valueOf(secondsLeft))
                     .replace("%slot%", String.valueOf(slot));
                 messageDispatcher.sendWithKey(currentPlayer, "messages.home-teleport-warmup", warmupMessage);
             },
             pending -> {
-                Player currentPlayer = Bukkit.getPlayer(pending.playerId());
+                Player currentPlayer = plugin.getServer().getPlayer(pending.playerId());
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
                 currentPlayer.teleport(pending.destination());
-                String message = plugin.getConfig().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
+                String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
                 messageDispatcher.sendWithKey(currentPlayer, "messages.home-teleported", message.replace("%slot%", String.valueOf(pending.payload())));
             }
         );
@@ -91,11 +101,11 @@ public final class HomesTeleportService implements Listener {
     }
 
     private void notifyCancelled(WarmupTeleportManager.PendingTeleport pending) {
-        Player player = Bukkit.getPlayer(pending.playerId());
+        Player player = plugin.getServer().getPlayer(pending.playerId());
         if (player == null || !player.isOnline()) {
             return;
         }
-        String message = plugin.getConfig().getString("messages.home-teleport-cancelled", "<red>Teleport cancelled.");
+        String message = plugin.configs().messages().getString("messages.home-teleport-cancelled", "<red>Teleport cancelled.");
         message = message.replace("%slot%", String.valueOf(pending.payload()));
         messageDispatcher.sendWithKey(player, "messages.home-teleport-cancelled", message);
     }

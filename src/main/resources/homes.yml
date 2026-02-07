@@ -1,0 +1,74 @@
+# homes feature configuration
+homes:
+  # maximum number of home slots a player can use
+  max-slots: 5
+  delete-confirmation:
+    # require a second right-click to delete a home
+    enabled: true
+    # confirmation window before the delete expires, in seconds
+    window-seconds: 5
+  teleport:
+    warmup:
+      # enable warmup before teleporting
+      enabled: true
+      # warmup duration in seconds
+      seconds: 3
+    # cancel warmup if the player moves
+    cancel-on-move: true
+    # cancel warmup if the player takes damage
+    cancel-on-damage: true
+    # how far a player can move before canceling, in blocks
+    movement-threshold: 0.1
+    # permission to bypass warmup and cancel checks
+    bypass-permission: jossentials.homes.teleport.bypass
+  gui:
+    # gui title shown to players
+    title: "<#cba6f7>Homes"
+    # gui size in slots when no structure is provided
+    size: 27
+    # show locked slots when the player lacks permission
+    show-locked-slots: true
+    # gui layout, each string is a row of 9 characters
+    structure:
+      - "#########"
+      - "#HHHHH..#"
+      - "#########"
+    # ingredient definitions used by structure characters
+    ingredients:
+      "#":
+        # material to render for this ingredient
+        material: BLACK_STAINED_GLASS_PANE
+        # display name for the ingredient item
+        name: "<gray> "
+        # lore lines for the ingredient item
+        lore: []
+      ".":
+        material: AIR
+        name: "<gray> "
+        lore: []
+    items:
+      set:
+        # item shown when a home is set
+        material: LIME_BED
+        name: "<#a6e3a1>Home <#f9e2af>%slot%"
+        lore:
+          - "<#bac2de>Left-click to teleport."
+          - "<#bac2de>Right-click to delete."
+      empty:
+        # item shown when the slot is empty
+        material: GRAY_BED
+        name: "<#6c7086>Empty Slot <#f9e2af>%slot%"
+        lore:
+          - "<#f9e2af>Click to set your home."
+      locked:
+        # item shown when the slot is locked and empty
+        material: BARRIER
+        name: "<#f38ba8>Locked Slot <#f9e2af>%slot%"
+        lore:
+          - "<#bac2de>Requires permission: <#f38ba8>%permission%"
+      locked-set:
+        # item shown when a home exists but permission is missing
+        material: RED_BED
+        name: "<#f38ba8>Home <#f9e2af>%slot%</#f9e2af> <#6c7086>(Locked)"
+        lore:
+          - "<#bac2de>You no longer have permission."

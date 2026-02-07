@@ -4,7 +4,6 @@ import gg.jos.jossentials.Jossentials;
 import gg.jos.jossentials.tpa.TPASettings;
 import gg.jos.jossentials.teleport.WarmupTeleportManager;
 import gg.jos.jossentials.util.MessageDispatcher;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,18 +11,21 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import gg.jos.jossentials.util.SchedulerAdapter;
 
 import java.util.UUID;
 
 public final class TPATeleportService implements Listener {
     private final Jossentials plugin;
     private final MessageDispatcher messageDispatcher;
+    private final SchedulerAdapter scheduler;
     private final WarmupTeleportManager warmupManager;
     private volatile TPASettings settings;
 
     public TPATeleportService(Jossentials plugin, MessageDispatcher messageDispatcher, TPASettings settings) {
         this.plugin = plugin;
         this.messageDispatcher = messageDispatcher;
+        this.scheduler = plugin.scheduler();
         this.settings = settings;
         this.warmupManager = new WarmupTeleportManager(plugin, () -> this.settings, this::notifyCancelled);
     }
@@ -39,9 +41,11 @@ public final class TPATeleportService implements Listener {
         TPASettings current = settings;
         Location destination = target.getLocation();
         if (!current.warmupEnabled() || requester.hasPermission(current.bypassPermission())) {
-            requester.teleport(destination);
-            String message = plugin.getConfig().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
-            messageDispatcher.sendWithKey(requester, "messages.tpa-teleported", message.replace("%target%", target.getName()));
+            scheduler.runEntity(requester, () -> {
+                requester.teleport(destination);
+                String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
+                messageDispatcher.sendWithKey(requester, "messages.tpa-teleported", message.replace("%target%", target.getName()));
+            });
             return;
         }
 
@@ -50,23 +54,29 @@ public final class TPATeleportService implements Listener {
             destination,
             target.getName(),
             pending -> {
-                Player currentPlayer = Bukkit.getPlayer(pending.playerId());
+                Player currentPlayer = plugin.getServer().getPlayer(pending.playerId());
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                String warmupMessage = plugin.getConfig().getString("messages.tpa-teleport-warmup", "<yellow>Teleporting in <gold>%seconds%</gold>s...");
+            },
+            (pending, secondsLeft) -> {
+                Player currentPlayer = plugin.getServer().getPlayer(pending.playerId());
+                if (currentPlayer == null || !currentPlayer.isOnline()) {
+                    return;
+                }
+                String warmupMessage = plugin.configs().messages().getString("messages.tpa-teleport-warmup", "<yellow>Teleporting in <gold>%seconds%</gold>s...");
                 warmupMessage = warmupMessage
-                    .replace("%seconds%", String.valueOf(current.warmupSeconds()))
+                    .replace("%seconds%", String.valueOf(secondsLeft))
                     .replace("%target%", String.valueOf(pending.payload()));
                 messageDispatcher.sendWithKey(currentPlayer, "messages.tpa-teleport-warmup", warmupMessage);
             },
             pending -> {
-                Player currentPlayer = Bukkit.getPlayer(pending.playerId());
+                Player currentPlayer = plugin.getServer().getPlayer(pending.playerId());
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
                 currentPlayer.teleport(pending.destination());
-                String message = plugin.getConfig().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
+                String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
                 messageDispatcher.sendWithKey(currentPlayer, "messages.tpa-teleported", message.replace("%target%", String.valueOf(pending.payload())));
             }
         );
@@ -96,11 +106,11 @@ public final class TPATeleportService implements Listener {
     }
 
     private void notifyCancelled(WarmupTeleportManager.PendingTeleport pending) {
-        Player player = Bukkit.getPlayer(pending.playerId());
+        Player player = plugin.getServer().getPlayer(pending.playerId());
         if (player == null || !player.isOnline()) {
             return;
         }
-        String message = plugin.getConfig().getString("messages.tpa-teleport-cancelled", "<red>Teleport cancelled.");
+        String message = plugin.configs().messages().getString("messages.tpa-teleport-cancelled", "<red>Teleport cancelled.");
         messageDispatcher.sendWithKey(player, "messages.tpa-teleport-cancelled", message);
     }
 }

@@ -1,0 +1,18 @@
+# tpa feature configuration
+tpa:
+  # how long a tpa request stays active, in seconds (0 disables expiry)
+  request-expiry-seconds: 60
+  teleport:
+    warmup:
+      # enable warmup before teleporting
+      enabled: true
+      # warmup duration in seconds
+      seconds: 3
+    # cancel warmup if the player moves
+    cancel-on-move: true
+    # cancel warmup if the player takes damage
+    cancel-on-damage: true
+    # how far a player can move before canceling, in blocks
+    movement-threshold: 0.1
+    # permission to bypass warmup and cancel checks
+    bypass-permission: jossentials.tpa.teleport.bypass
