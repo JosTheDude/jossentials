@@ -5,6 +5,7 @@ config-version: 1
 # these are loaded alongside this base file
 config-files:
   - homes.yml
+  - spawn.yml
   - tpa.yml
   - workbenches.yml
   - messages.yml
@@ -53,4 +54,7 @@ features:
     enabled: true
   workbenches:
     # enable or disable the workbenches feature
+    enabled: true
+  spawn:
+    # enable or disable the spawn feature
     enabled: true

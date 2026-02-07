@@ -84,6 +84,26 @@ messages:
         name: BLOCK_NOTE_BLOCK_BASS
         volume: 0.8
         pitch: 0.6
+      spawn-set:
+        name: BLOCK_NOTE_BLOCK_PLING
+        volume: 0.8
+        pitch: 1.2
+      spawn-teleported:
+        name: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.7
+        pitch: 1.0
+      spawn-teleport-warmup:
+        name: BLOCK_NOTE_BLOCK_CHIME
+        volume: 0.6
+        pitch: 1.2
+      spawn-teleport-cancelled:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
+      spawn-not-set:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
   # placeholder-capable message strings
   loading: "<#d3d3d3>Loading your homes..."
   database-error: "<#f38ba8>Could not load homes right now."
@@ -116,5 +136,10 @@ messages:
   tpa-teleport-warmup: "<#d3d3d3>Teleporting to <u>%target%</u> in <u>%seconds%s</u>..."
   tpa-teleported: "<#a6e3a1>Teleported to <u>%target%</u>."
   tpa-teleport-cancelled: "<#f38ba8>Teleport cancelled."
+  spawn-set: "<#a6e3a1>Spawn set."
+  spawn-teleported: "<#a6e3a1>Teleported to Spawn!"
+  spawn-teleport-warmup: "<#d3d3d3>Teleporting in <u>%seconds%s</u>..."
+  spawn-teleport-cancelled: "<#f38ba8>Teleport cancelled."
+  spawn-not-set: "<#f38ba8>Spawn has not been set yet."
   reload: "<#a6e3a1>Jossentials reloaded."
   feature-disabled: "<#f38ba8><i>This feature is disabled.</i>"

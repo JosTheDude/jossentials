@@ -6,6 +6,7 @@ import gg.jos.jossentials.command.ReloadCommand;
 import gg.jos.jossentials.config.ConfigManager;
 import gg.jos.jossentials.feature.FeatureManager;
 import gg.jos.jossentials.homes.feature.HomesFeature;
+import gg.jos.jossentials.spawn.SpawnFeature;
 import gg.jos.jossentials.tpa.feature.TPAFeature;
 import gg.jos.jossentials.util.MessageDispatcher;
 import gg.jos.jossentials.util.SchedulerAdapter;
@@ -17,7 +18,6 @@ public final class Jossentials extends JavaPlugin {
     private ConfigManager configs;
     private SchedulerAdapter scheduler;
     private Database database;
-    private MessageDispatcher messageDispatcher;
     private FeatureManager featureManager;
 
     @Override
@@ -35,12 +35,13 @@ public final class Jossentials extends JavaPlugin {
             return;
         }
 
-        messageDispatcher = new MessageDispatcher(this);
+        MessageDispatcher messageDispatcher = new MessageDispatcher(this);
         PaperCommandManager commandManager = new PaperCommandManager(this);
         featureManager = new FeatureManager();
         featureManager.register(new HomesFeature(this, database, commandManager, messageDispatcher));
+        featureManager.register(new SpawnFeature(this, commandManager, messageDispatcher));
         featureManager.register(new TPAFeature(this, commandManager, messageDispatcher));
-        featureManager.register(new WorkbenchesFeature(this, messageDispatcher));
+        featureManager.register(new WorkbenchesFeature(this, commandManager, messageDispatcher));
         featureManager.enableConfigured();
         commandManager.registerCommand(new ReloadCommand(this, featureManager, messageDispatcher));
 

@@ -1,3 +1,5 @@
+# home permissions: jossentials.homes.(home number)
+
 # homes feature configuration
 homes:
   # maximum number of home slots a player can use
@@ -31,7 +33,7 @@ homes:
     # gui layout, each string is a row of 9 characters
     structure:
       - "#########"
-      - "#HHHHH..#"
+      - "##HHHHH##"
       - "#########"
     # ingredient definitions used by structure characters
     ingredients:

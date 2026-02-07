@@ -10,6 +10,12 @@ commands:
   homes:
     description: Open the homes GUI.
     usage: /homes
+  spawn:
+    description: Teleport to spawn.
+    usage: /spawn
+  setspawn:
+    description: Set the server spawn.
+    usage: /setspawn
   tpa:
     description: Request to teleport to another player.
     usage: /tpa <player>
@@ -69,6 +75,15 @@ permissions:
     default: true
   jossentials.tpa.teleport.bypass:
     description: Bypass tpa teleport warmup/cancel checks.
+    default: op
+  jossentials.spawn:
+    description: Teleport to spawn.
+    default: true
+  jossentials.setspawn:
+    description: Set the server spawn.
+    default: op
+  jossentials.spawn.teleport.bypass:
+    description: Bypass spawn teleport warmup/cancel checks.
     default: op
   jossentials.workbench.crafting_table:
     description: Open the crafting table workbench.

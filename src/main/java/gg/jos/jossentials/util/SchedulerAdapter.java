@@ -34,7 +34,7 @@ public final class SchedulerAdapter {
         boolean foliaDetected = false;
 
         try {
-            Method getGlobalScheduler = Bukkit.class.getMethod("getGlobalRegionScheduler");
+            Method getGlobalScheduler = Bukkit.class.getMethod("getRegionScheduler");
             global = getGlobalScheduler.invoke(null);
             globalRunMethod = global.getClass().getMethod("run", JavaPlugin.class, Consumer.class);
             globalRunDelayedMethod = global.getClass().getMethod("runDelayed", JavaPlugin.class, Consumer.class, long.class);
@@ -43,7 +43,6 @@ public final class SchedulerAdapter {
             entityGetSchedulerMethod = Player.class.getMethod("getScheduler");
             foliaDetected = true;
         } catch (Exception ignored) {
-            foliaDetected = false;
         }
 
         this.folia = foliaDetected;

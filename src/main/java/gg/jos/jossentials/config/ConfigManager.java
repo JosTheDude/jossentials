@@ -14,6 +14,7 @@ public final class ConfigManager {
     private FileConfiguration homes;
     private FileConfiguration tpa;
     private FileConfiguration workbenches;
+    private FileConfiguration spawn;
     private FileConfiguration messages;
 
     public ConfigManager(JavaPlugin plugin) {
@@ -27,6 +28,7 @@ public final class ConfigManager {
         homes = loadConfig("homes.yml", "homes");
         tpa = loadConfig("tpa.yml", "tpa");
         workbenches = loadConfig("workbenches.yml", "workbenches");
+        spawn = loadConfig("spawn.yml", "spawn");
         messages = loadConfig("messages.yml", "messages");
     }
 
@@ -37,6 +39,7 @@ public final class ConfigManager {
         homes = loadConfig("homes.yml", "homes");
         tpa = loadConfig("tpa.yml", "tpa");
         workbenches = loadConfig("workbenches.yml", "workbenches");
+        spawn = loadConfig("spawn.yml", "spawn");
         messages = loadConfig("messages.yml", "messages");
     }
 
@@ -60,8 +63,16 @@ public final class ConfigManager {
         return workbenches;
     }
 
+    public FileConfiguration spawn() {
+        return spawn;
+    }
+
     public FileConfiguration messages() {
         return messages;
+    }
+
+    public File spawnFile() {
+        return new File(plugin.getDataFolder(), "spawn.yml");
     }
 
     private FileConfiguration loadConfig(String fileName, String rootKey) {
