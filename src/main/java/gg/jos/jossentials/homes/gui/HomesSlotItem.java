@@ -59,6 +59,12 @@ public final class HomesSlotItem extends AbstractItem {
         if (location == null) {
             return itemFactory.create("homes.gui.items.empty", slot, permission);
         }
+        if (settings.deleteConfirmationEnabled) {
+            long windowMillis = settings.deleteConfirmationWindowSeconds * 1000L;
+            if (deleteConfirmationManager.isPending(player.getUniqueId(), slot, windowMillis)) {
+                return itemFactory.create("homes.gui.items.delete-confirm", slot, permission);
+            }
+        }
         return itemFactory.create("homes.gui.items.set", slot, permission);
     }
 
@@ -100,6 +106,8 @@ public final class HomesSlotItem extends AbstractItem {
                     message = message.replace("%seconds%", String.valueOf(windowSeconds))
                         .replace("%slot%", String.valueOf(slot));
                     messageDispatcher.sendWithKey(player, "messages.home-delete-confirm", message);
+                    notifyWindows();
+                    plugin.scheduler().runEntityLater(player, this::notifyWindows, windowSeconds * 20L);
                     return;
                 }
             }

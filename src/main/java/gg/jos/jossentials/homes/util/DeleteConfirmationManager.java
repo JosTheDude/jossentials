@@ -33,4 +33,24 @@ public final class DeleteConfirmationManager {
             }
         }
     }
+
+    public boolean isPending(UUID playerId, int slot, long windowMillis) {
+        Map<Integer, Long> playerConfirmations = confirmations.get(playerId);
+        if (playerConfirmations == null) {
+            return false;
+        }
+        Long last = playerConfirmations.get(slot);
+        if (last == null) {
+            return false;
+        }
+        long now = System.currentTimeMillis();
+        if (now - last > windowMillis) {
+            playerConfirmations.remove(slot);
+            if (playerConfirmations.isEmpty()) {
+                confirmations.remove(playerId);
+            }
+            return false;
+        }
+        return true;
+    }
 }
