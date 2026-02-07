@@ -1,10 +1,11 @@
 plugins {
     id 'java'
+    id 'com.gradleup.shadow' version '8.3.0'
     id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 group = 'gg.jos'
-version = '1.0'
+version = '1.0.0'
 
 repositories {
     mavenCentral()
@@ -12,11 +13,32 @@ repositories {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+    maven { url = "https://repo.xenondevs.xyz/releases" }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    implementation "co.aikar:acf-paper:0.5.1-SNAPSHOT" // Replace PLATFORM with bukkit, paper, sponge, etc
+    implementation("xyz.xenondevs.invui:invui:2.0.0-beta.1")
+    implementation("com.zaxxer:HikariCP:7.0.2")
+    
 }
+
+compileJava {
+    options.compilerArgs += ["-parameters"]
+    options.fork = true
+    options.forkOptions.executable = System.getProperty("java.home") + "/bin/javac"
+}
+
+shadowJar {
+    relocate 'co.aikar.commands', 'gg.jos.jossentials.acf'
+    relocate 'co.aikar.locales', 'gg.jos.jossentials.locales'
+    relocate 'com.zaxxer.hikari', 'gg.jos.jossentials.hikari'
+    relocate 'xyz.xenondevs.invui', 'gg.jos.jossentials.invui'
+}
+
+build.dependsOn shadowJar
 
 tasks {
     runServer {

@@ -1,7 +1,79 @@
 name: Jossentials
-version: '1.0'
+version: '${version}'
 main: gg.jos.jossentials.Jossentials
 api-version: '1.21'
 authors: [ JosTheDude ]
 description: An all-in-one essentials core made to be easy-to-use for players.
 website: https://jos.gg/
+
+commands:
+  homes:
+    description: Open the homes GUI.
+    usage: /homes
+  tpa:
+    description: Request to teleport to another player.
+    usage: /tpa <player>
+    aliases: [tpask]
+  tpahere:
+    description: Request a player to teleport to you.
+    usage: /tpahere <player>
+  tpaccept:
+    description: Accept a teleport request.
+    usage: /tpaccept [player]
+    aliases: [tpyes]
+  tpdeny:
+    description: Deny a teleport request.
+    usage: /tpdeny [player]
+    aliases: [tpno]
+  tpcancel:
+    description: Cancel your outgoing teleport request.
+    usage: /tpcancel
+  jossentials:
+    description: Jossentials main command.
+    usage: /jossentials reload
+    aliases: [joss, jessentials]
+
+permissions:
+  jossentials.homes.1:
+    description: Access to home slot 1.
+    default: true
+  jossentials.homes.2:
+    description: Access to home slot 2.
+    default: false
+  jossentials.homes.3:
+    description: Access to home slot 3.
+    default: false
+  jossentials.homes.4:
+    description: Access to home slot 4.
+    default: false
+  jossentials.homes.5:
+    description: Access to home slot 5.
+    default: false
+  jossentials.homes.teleport.bypass:
+    description: Bypass homes teleport warmup/cancel checks.
+    default: op
+  jossentials.tpa:
+    description: Request teleport to a player.
+    default: true
+  jossentials.tpa.here:
+    description: Request a player to teleport to you.
+    default: true
+  jossentials.tpa.accept:
+    description: Accept teleport requests.
+    default: true
+  jossentials.tpa.deny:
+    description: Deny teleport requests.
+    default: true
+  jossentials.tpa.cancel:
+    description: Cancel teleport requests.
+    default: true
+  jossentials.tpa.teleport.bypass:
+    description: Bypass tpa teleport warmup/cancel checks.
+    default: op
+  jossentials.reload:
+    description: Reload Jossentials configuration.
+    default: op
+
+libraries:
+  - org.xerial:sqlite-jdbc:3.51.1.0
+  - com.mysql:mysql-connector-j:9.6.0
