@@ -33,17 +33,26 @@ public final class SchedulerAdapter {
         Method entityGetSchedulerMethod = null;
         boolean foliaDetected = false;
 
+        boolean globalDetected = false;
+        boolean entityDetected = false;
+
         try {
-            Method getGlobalScheduler = Bukkit.class.getMethod("getRegionScheduler");
+            Method getGlobalScheduler = Bukkit.class.getMethod("getGlobalRegionScheduler");
             global = getGlobalScheduler.invoke(null);
             globalRunMethod = global.getClass().getMethod("run", JavaPlugin.class, Consumer.class);
             globalRunDelayedMethod = global.getClass().getMethod("runDelayed", JavaPlugin.class, Consumer.class, long.class);
             globalRunAtFixedRateMethod = global.getClass().getMethod("runAtFixedRate", JavaPlugin.class, Consumer.class, long.class, long.class);
-
-            entityGetSchedulerMethod = Player.class.getMethod("getScheduler");
-            foliaDetected = true;
+            globalDetected = true;
         } catch (Exception ignored) {
         }
+
+        try {
+            entityGetSchedulerMethod = Player.class.getMethod("getScheduler");
+            entityDetected = true;
+        } catch (Exception ignored) {
+        }
+
+        foliaDetected = globalDetected || entityDetected;
 
         this.folia = foliaDetected;
         this.globalScheduler = global;

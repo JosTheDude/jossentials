@@ -148,6 +148,9 @@ public final class WarmupTeleportManager {
             if (pendingTeleport.task != null) {
                 pendingTeleport.task.cancel();
             }
+            if (pendingTeleport.countdownTask != null) {
+                pendingTeleport.countdownTask.cancel();
+            }
         }
         pending.clear();
     }

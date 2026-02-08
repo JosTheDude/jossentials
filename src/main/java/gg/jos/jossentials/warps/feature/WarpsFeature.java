@@ -154,15 +154,20 @@ public final class WarpsFeature implements Feature {
         boolean existed = warpsService.getWarp(normalized) != null;
         WarpLocation location = WarpLocation.fromLocation(player.getLocation());
         warpsService.setWarp(normalized, location).whenComplete((success, throwable) -> {
-            if (throwable != null || !Boolean.TRUE.equals(success)) {
-                String message = plugin.configs().messages().getString("messages.warp-set-failed", "<red>Failed to set warp.");
-                messageDispatcher.sendWithKey(player, "messages.warp-set-failed", message.replace("%warp%", normalized));
-                return;
-            }
-            String messageKey = existed ? "messages.warp-updated" : "messages.warp-set";
-            String fallback = existed ? "<green>Warp <gold>%warp%</gold> updated." : "<green>Warp <gold>%warp%</gold> set.";
-            String message = plugin.configs().messages().getString(messageKey, fallback);
-            messageDispatcher.sendWithKey(player, messageKey, message.replace("%warp%", normalized));
+            plugin.scheduler().runEntity(player, () -> {
+                if (!player.isOnline()) {
+                    return;
+                }
+                if (throwable != null || !Boolean.TRUE.equals(success)) {
+                    String message = plugin.configs().messages().getString("messages.warp-set-failed", "<red>Failed to set warp.");
+                    messageDispatcher.sendWithKey(player, "messages.warp-set-failed", message.replace("%warp%", normalized));
+                    return;
+                }
+                String messageKey = existed ? "messages.warp-updated" : "messages.warp-set";
+                String fallback = existed ? "<green>Warp <gold>%warp%</gold> updated." : "<green>Warp <gold>%warp%</gold> set.";
+                String message = plugin.configs().messages().getString(messageKey, fallback);
+                messageDispatcher.sendWithKey(player, messageKey, message.replace("%warp%", normalized));
+            });
         });
     }
 
@@ -189,13 +194,18 @@ public final class WarpsFeature implements Feature {
             return;
         }
         warpsService.deleteWarp(normalized).whenComplete((success, throwable) -> {
-            if (throwable != null || !Boolean.TRUE.equals(success)) {
-                String message = plugin.configs().messages().getString("messages.warp-delete-failed", "<red>Failed to delete warp.");
-                messageDispatcher.sendWithKey(player, "messages.warp-delete-failed", message.replace("%warp%", normalized));
-                return;
-            }
-            String message = plugin.configs().messages().getString("messages.warp-deleted", "<green>Warp <gold>%warp%</gold> deleted.");
-            messageDispatcher.sendWithKey(player, "messages.warp-deleted", message.replace("%warp%", normalized));
+            plugin.scheduler().runEntity(player, () -> {
+                if (!player.isOnline()) {
+                    return;
+                }
+                if (throwable != null || !Boolean.TRUE.equals(success)) {
+                    String message = plugin.configs().messages().getString("messages.warp-delete-failed", "<red>Failed to delete warp.");
+                    messageDispatcher.sendWithKey(player, "messages.warp-delete-failed", message.replace("%warp%", normalized));
+                    return;
+                }
+                String message = plugin.configs().messages().getString("messages.warp-deleted", "<green>Warp <gold>%warp%</gold> deleted.");
+                messageDispatcher.sendWithKey(player, "messages.warp-deleted", message.replace("%warp%", normalized));
+            });
         });
     }
 

@@ -11,6 +11,13 @@ public final class DeleteConfirmationManager {
         Map<Integer, Long> playerConfirmations = confirmations.computeIfAbsent(playerId, key -> new ConcurrentHashMap<>());
         Long last = playerConfirmations.get(slot);
         if (last != null) {
+            if (windowMillis > 0 && System.currentTimeMillis() - last > windowMillis) {
+                playerConfirmations.remove(slot);
+                if (playerConfirmations.isEmpty()) {
+                    confirmations.remove(playerId);
+                }
+                return false;
+            }
             playerConfirmations.remove(slot);
             if (playerConfirmations.isEmpty()) {
                 confirmations.remove(playerId);
@@ -37,6 +44,16 @@ public final class DeleteConfirmationManager {
             return false;
         }
         Long last = playerConfirmations.get(slot);
-        return last != null;
+        if (last == null) {
+            return false;
+        }
+        if (windowMillis > 0 && System.currentTimeMillis() - last > windowMillis) {
+            playerConfirmations.remove(slot);
+            if (playerConfirmations.isEmpty()) {
+                confirmations.remove(playerId);
+            }
+            return false;
+        }
+        return true;
     }
 }

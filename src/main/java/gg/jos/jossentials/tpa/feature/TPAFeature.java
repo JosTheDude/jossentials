@@ -14,13 +14,16 @@ import gg.jos.jossentials.tpa.command.TPToggleCommand;
 import gg.jos.jossentials.tpa.teleport.TPATeleportService;
 import gg.jos.jossentials.util.MessageDispatcher;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class TPAFeature implements Feature {
+public final class TPAFeature implements Feature, Listener {
     private final Jossentials plugin;
     private final PaperCommandManager commandManager;
     private final MessageDispatcher messageDispatcher;
@@ -72,6 +75,7 @@ public final class TPAFeature implements Feature {
         }
         plugin.getServer().getPluginManager().registerEvents(teleportService, plugin);
         plugin.getServer().getPluginManager().registerEvents(requestService, plugin);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
         enabled = true;
     }
 
@@ -193,5 +197,10 @@ public final class TPAFeature implements Feature {
 
     public boolean isTpaEnabled(Player player) {
         return !tpaDisabled.contains(player.getUniqueId());
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        tpaDisabled.remove(event.getPlayer().getUniqueId());
     }
 }

@@ -60,7 +60,8 @@ public final class HomesSlotItem extends AbstractItem {
             return itemFactory.create("homes.gui.items.empty", slot, permission);
         }
         if (settings.deleteConfirmationEnabled) {
-            if (deleteConfirmationManager.isPending(player.getUniqueId(), slot, 0L)) {
+            long windowMillis = settings.deleteConfirmationWindowSeconds * 1000L;
+            if (deleteConfirmationManager.isPending(player.getUniqueId(), slot, windowMillis)) {
                 return itemFactory.create("homes.gui.items.delete-confirm", slot, permission);
             }
         }
@@ -100,7 +101,8 @@ public final class HomesSlotItem extends AbstractItem {
         if (clickType.isRightClick()) {
             if (settings.deleteConfirmationEnabled) {
                 int windowSeconds = settings.deleteConfirmationWindowSeconds;
-                if (!deleteConfirmationManager.confirm(player.getUniqueId(), slot, 0L)) {
+                long windowMillis = windowSeconds * 1000L;
+                if (!deleteConfirmationManager.confirm(player.getUniqueId(), slot, windowMillis)) {
                     String message = plugin.configs().messages().getString("messages.home-delete-confirm", "<yellow>Right-click again to delete.");
                     message = message.replace("%seconds%", String.valueOf(windowSeconds))
                         .replace("%slot%", String.valueOf(slot));
