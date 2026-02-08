@@ -5,7 +5,7 @@ import gg.jos.jossentials.Jossentials;
 import gg.jos.jossentials.util.MessageDispatcher;
 import gg.jos.jossentials.workbenches.WorkbenchType;
 
-@CommandAlias("%workbench_stonecutter%")
+@CommandAlias("%{workbench_stonecutter}")
 public final class StonecutterCommand extends WorkbenchCommandBase {
     public StonecutterCommand(Jossentials plugin, MessageDispatcher messageDispatcher) {
         super(plugin, messageDispatcher, WorkbenchType.STONECUTTER);

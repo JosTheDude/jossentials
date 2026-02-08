@@ -7,6 +7,7 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Optional;
 import gg.jos.jossentials.tpa.feature.TPAFeature;
 import gg.jos.jossentials.util.MessageDispatcher;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @CommandAlias("tpdeny|tpno")
@@ -21,14 +22,19 @@ public final class TPADenyCommand extends BaseCommand {
     }
 
     @Default
-    public void onDeny(Player player, @Optional Player requester) {
+    public void onDeny(Player player, @Optional String requesterName) {
         if (!tpaFeature.isEnabled()) {
             messageDispatcher.send(player, "messages.feature-disabled", "<red>This feature is disabled.");
             return;
         }
-        if (requester == null) {
+        if (requesterName == null || requesterName.isBlank()) {
             tpaFeature.denySingle(player);
         } else {
+            Player requester = Bukkit.getPlayerExact(requesterName);
+            if (requester == null) {
+                messageDispatcher.send(player, "messages.tpa-no-pending", "<red>You have no pending teleport requests.");
+                return;
+            }
             tpaFeature.deny(player, requester);
         }
     }

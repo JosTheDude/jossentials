@@ -7,6 +7,7 @@ config-files:
   - homes.yml
   - spawn.yml
   - tpa.yml
+  - warps.yml
   - workbenches.yml
   - messages.yml
 
@@ -57,4 +58,7 @@ features:
     enabled: true
   spawn:
     # enable or disable the spawn feature
+    enabled: true
+  warps:
+    # enable or disable the warps feature
     enabled: true

@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import gg.jos.jossentials.tpa.feature.TPAFeature;
 import gg.jos.jossentials.util.MessageDispatcher;
 import org.bukkit.entity.Player;
@@ -20,11 +21,11 @@ public final class TPACommand extends BaseCommand {
     }
 
     @Default
-    public void onTpa(Player player, Player target) {
+    public void onTpa(Player player, OnlinePlayer target) {
         if (!tpaFeature.isEnabled()) {
             messageDispatcher.send(player, "messages.feature-disabled", "<red>This feature is disabled.");
             return;
         }
-        tpaFeature.request(player, target);
+        tpaFeature.request(player, target.getPlayer());
     }
 }

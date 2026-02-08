@@ -104,6 +104,30 @@ messages:
         name: BLOCK_NOTE_BLOCK_BASS
         volume: 0.8
         pitch: 0.6
+      warp-set:
+        name: BLOCK_NOTE_BLOCK_PLING
+        volume: 0.8
+        pitch: 1.2
+      warp-updated:
+        name: BLOCK_NOTE_BLOCK_PLING
+        volume: 0.8
+        pitch: 1.1
+      warp-deleted:
+        name: BLOCK_NOTE_BLOCK_PLING
+        volume: 0.8
+        pitch: 1.2
+      warp-teleported:
+        name: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.7
+        pitch: 1.0
+      warp-teleport-warmup:
+        name: BLOCK_NOTE_BLOCK_CHIME
+        volume: 0.6
+        pitch: 1.2
+      warp-teleport-cancelled:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
   # placeholder-capable message strings
   loading: "<#d3d3d3>Loading your homes..."
   database-error: "<#f38ba8>Could not load homes right now."
@@ -133,6 +157,9 @@ messages:
   tpa-request-expired-target: "<#f38ba8>Teleport request from <u>%requester%</u> expired."
   tpa-no-pending: "<#f38ba8>You have no pending teleport requests."
   tpa-multiple-pending: "<#f9e2af>Multiple requests pending. Use <u>/tpaccept <player></u>."
+  tpa-target-disabled: "<#f38ba8><u>%target%</u> has teleport requests disabled."
+  tpa-toggle-on: "<#a6e3a1>Teleport requests enabled."
+  tpa-toggle-off: "<#f38ba8>Teleport requests disabled."
   tpa-teleport-warmup: "<#d3d3d3>Teleporting to <u>%target%</u> in <u>%seconds%s</u>..."
   tpa-teleported: "<#a6e3a1>Teleported to <u>%target%</u>."
   tpa-teleport-cancelled: "<#f38ba8>Teleport cancelled."
@@ -141,5 +168,18 @@ messages:
   spawn-teleport-warmup: "<#d3d3d3>Teleporting in <u>%seconds%s</u>..."
   spawn-teleport-cancelled: "<#f38ba8>Teleport cancelled."
   spawn-not-set: "<#f38ba8>Spawn has not been set yet."
+  warp-loading: "<#d3d3d3>Loading warps..."
+  warp-name-invalid: "<#f38ba8>That warp name is invalid."
+  warp-not-found: "<#f38ba8>Warp <u>%warp%</u> not found."
+  warp-set: "<#a6e3a1>Warp <u>%warp%</u> set."
+  warp-updated: "<#a6e3a1>Warp <u>%warp%</u> updated."
+  warp-set-failed: "<#f38ba8>Failed to set warp <u>%warp%</u>."
+  warp-deleted: "<#a6e3a1>Warp <u>%warp%</u> deleted."
+  warp-delete-failed: "<#f38ba8>Failed to delete warp <u>%warp%</u>."
+  warp-list: "<#d3d3d3>Warps: <u>%warps%</u>."
+  warp-list-empty: "<#d3d3d3>No warps have been set."
+  warp-teleport-warmup: "<#d3d3d3>Teleporting to <u>%warp%</u> in <u>%seconds%s</u>..."
+  warp-teleported: "<#a6e3a1>Teleported to <u>%warp%</u>."
+  warp-teleport-cancelled: "<#f38ba8>Teleport cancelled."
   reload: "<#a6e3a1>Jossentials reloaded."
   feature-disabled: "<#f38ba8><i>This feature is disabled.</i>"

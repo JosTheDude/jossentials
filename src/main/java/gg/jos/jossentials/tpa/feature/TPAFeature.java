@@ -10,10 +10,15 @@ import gg.jos.jossentials.tpa.command.TPACancelCommand;
 import gg.jos.jossentials.tpa.command.TPACommand;
 import gg.jos.jossentials.tpa.command.TPADenyCommand;
 import gg.jos.jossentials.tpa.command.TPAHereCommand;
+import gg.jos.jossentials.tpa.command.TPToggleCommand;
 import gg.jos.jossentials.tpa.teleport.TPATeleportService;
 import gg.jos.jossentials.util.MessageDispatcher;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class TPAFeature implements Feature {
     private final Jossentials plugin;
@@ -23,6 +28,7 @@ public final class TPAFeature implements Feature {
     private TPATeleportService teleportService;
     private TPARequestService requestService;
     private TPASettings settings;
+    private final Set<UUID> tpaDisabled = ConcurrentHashMap.newKeySet();
     private boolean enabled;
     private boolean commandsRegistered;
 
@@ -61,6 +67,7 @@ public final class TPAFeature implements Feature {
             commandManager.registerCommand(new TPAAcceptCommand(this, messageDispatcher));
             commandManager.registerCommand(new TPADenyCommand(this, messageDispatcher));
             commandManager.registerCommand(new TPACancelCommand(this, messageDispatcher));
+            commandManager.registerCommand(new TPToggleCommand(this, messageDispatcher));
             commandsRegistered = true;
         }
         plugin.getServer().getPluginManager().registerEvents(teleportService, plugin);
@@ -83,6 +90,7 @@ public final class TPAFeature implements Feature {
             requestService.shutdown();
             requestService = null;
         }
+        tpaDisabled.clear();
         enabled = false;
     }
 
@@ -106,6 +114,11 @@ public final class TPAFeature implements Feature {
             messageDispatcher.sendWithKey(requester, "messages.feature-disabled", message.replace("%feature%", "TPA"));
             return;
         }
+        if (!isTpaEnabled(target)) {
+            String message = plugin.configs().messages().getString("messages.tpa-target-disabled", "<red>That player has teleport requests disabled.");
+            messageDispatcher.sendWithKey(requester, "messages.tpa-target-disabled", message.replace("%target%", target.getName()));
+            return;
+        }
         requestService.request(requester, target);
     }
 
@@ -113,6 +126,11 @@ public final class TPAFeature implements Feature {
         if (!enabled || requestService == null) {
             String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(requester, "messages.feature-disabled", message.replace("%feature%", "TPA"));
+            return;
+        }
+        if (!isTpaEnabled(target)) {
+            String message = plugin.configs().messages().getString("messages.tpa-target-disabled", "<red>That player has teleport requests disabled.");
+            messageDispatcher.sendWithKey(requester, "messages.tpa-target-disabled", message.replace("%target%", target.getName()));
             return;
         }
         requestService.requestHere(requester, target);
@@ -161,5 +179,19 @@ public final class TPAFeature implements Feature {
             return;
         }
         requestService.cancel(requester);
+    }
+
+    public boolean toggleTpa(Player player) {
+        UUID playerId = player.getUniqueId();
+        if (tpaDisabled.contains(playerId)) {
+            tpaDisabled.remove(playerId);
+            return true;
+        }
+        tpaDisabled.add(playerId);
+        return false;
+    }
+
+    public boolean isTpaEnabled(Player player) {
+        return !tpaDisabled.contains(player.getUniqueId());
     }
 }

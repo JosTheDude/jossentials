@@ -34,6 +34,22 @@ commands:
   tpcancel:
     description: Cancel your outgoing teleport request.
     usage: /tpcancel
+  tptoggle:
+    description: Toggle incoming teleport requests.
+    usage: /tptoggle
+  warp:
+    description: Teleport to a warp.
+    usage: /warp <name>
+  warps:
+    description: List available warps.
+    usage: /warps
+  setwarp:
+    description: Set a warp.
+    usage: /setwarp <name>
+  delwarp:
+    description: Delete a warp.
+    usage: /delwarp <name>
+    aliases: [deletewarp]
   jossentials:
     description: Jossentials main command.
     usage: /jossentials reload
@@ -42,7 +58,7 @@ commands:
 permissions:
   jossentials.homes.1:
     description: Access to home slot 1.
-    default: true
+    default: false
   jossentials.homes.2:
     description: Access to home slot 2.
     default: false
@@ -73,6 +89,9 @@ permissions:
   jossentials.tpa.cancel:
     description: Cancel teleport requests.
     default: true
+  jossentials.tpa.toggle:
+    description: Toggle incoming teleport requests.
+    default: true
   jossentials.tpa.teleport.bypass:
     description: Bypass tpa teleport warmup/cancel checks.
     default: op
@@ -84,6 +103,21 @@ permissions:
     default: op
   jossentials.spawn.teleport.bypass:
     description: Bypass spawn teleport warmup/cancel checks.
+    default: op
+  jossentials.warp:
+    description: Teleport to a warp.
+    default: true
+  jossentials.warps:
+    description: List available warps.
+    default: true
+  jossentials.setwarp:
+    description: Set a warp.
+    default: op
+  jossentials.delwarp:
+    description: Delete a warp.
+    default: op
+  jossentials.warp.teleport.bypass:
+    description: Bypass warp teleport warmup/cancel checks.
     default: op
   jossentials.workbench.crafting_table:
     description: Open the crafting table workbench.

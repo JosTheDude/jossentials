@@ -4,28 +4,30 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
-import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import gg.jos.jossentials.tpa.feature.TPAFeature;
 import gg.jos.jossentials.util.MessageDispatcher;
 import org.bukkit.entity.Player;
 
-@CommandAlias("tpahere")
-@CommandPermission("jossentials.tpa.here")
-public final class TPAHereCommand extends BaseCommand {
+@CommandAlias("tptoggle")
+@CommandPermission("jossentials.tpa.toggle")
+public final class TPToggleCommand extends BaseCommand {
     private final TPAFeature tpaFeature;
     private final MessageDispatcher messageDispatcher;
 
-    public TPAHereCommand(TPAFeature tpaFeature, MessageDispatcher messageDispatcher) {
+    public TPToggleCommand(TPAFeature tpaFeature, MessageDispatcher messageDispatcher) {
         this.tpaFeature = tpaFeature;
         this.messageDispatcher = messageDispatcher;
     }
 
     @Default
-    public void onTpaHere(Player player, OnlinePlayer target) {
+    public void onToggle(Player player) {
         if (!tpaFeature.isEnabled()) {
             messageDispatcher.send(player, "messages.feature-disabled", "<red>This feature is disabled.");
             return;
         }
-        tpaFeature.requestHere(player, target.getPlayer());
+        boolean enabled = tpaFeature.toggleTpa(player);
+        String messageKey = enabled ? "messages.tpa-toggle-on" : "messages.tpa-toggle-off";
+        String fallback = enabled ? "<green>Teleport requests enabled." : "<red>Teleport requests disabled.";
+        messageDispatcher.send(player, messageKey, fallback);
     }
 }

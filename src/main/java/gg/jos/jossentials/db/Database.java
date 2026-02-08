@@ -34,7 +34,8 @@ public final class Database {
 
     public void initialize() throws SQLException {
         try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
-            statement.executeUpdate(createTableSql());
+            statement.executeUpdate(createHomesTableSql());
+            statement.executeUpdate(createWarpsTableSql());
         }
     }
 
@@ -108,7 +109,7 @@ public final class Database {
         }
     }
 
-    private String createTableSql() {
+    private String createHomesTableSql() {
         if (type == DatabaseType.MYSQL) {
             return "CREATE TABLE IF NOT EXISTS jossentials_homes ("
                 + "player_uuid VARCHAR(36) NOT NULL,"
@@ -132,6 +133,31 @@ public final class Database {
             + "yaw REAL NOT NULL,"
             + "pitch REAL NOT NULL,"
             + "PRIMARY KEY (player_uuid, slot)"
+            + ")";
+    }
+
+    private String createWarpsTableSql() {
+        if (type == DatabaseType.MYSQL) {
+            return "CREATE TABLE IF NOT EXISTS jossentials_warps ("
+                + "name VARCHAR(64) NOT NULL,"
+                + "world VARCHAR(128) NOT NULL,"
+                + "x DOUBLE NOT NULL,"
+                + "y DOUBLE NOT NULL,"
+                + "z DOUBLE NOT NULL,"
+                + "yaw FLOAT NOT NULL,"
+                + "pitch FLOAT NOT NULL,"
+                + "PRIMARY KEY (name)"
+                + ")";
+        }
+        return "CREATE TABLE IF NOT EXISTS jossentials_warps ("
+            + "name TEXT NOT NULL,"
+            + "world TEXT NOT NULL,"
+            + "x REAL NOT NULL,"
+            + "y REAL NOT NULL,"
+            + "z REAL NOT NULL,"
+            + "yaw REAL NOT NULL,"
+            + "pitch REAL NOT NULL,"
+            + "PRIMARY KEY (name)"
             + ")";
     }
 }
