@@ -16,13 +16,26 @@ import gg.jos.jossentials.workbenches.command.LoomCommand;
 import gg.jos.jossentials.workbenches.command.SmithingTableCommand;
 import gg.jos.jossentials.workbenches.command.SmokerCommand;
 import gg.jos.jossentials.workbenches.command.StonecutterCommand;
+import java.util.EnumSet;
+import java.util.Set;
 
 public final class WorkbenchesFeature implements Feature {
+    private static final Set<WorkbenchType> COMMAND_TYPES = EnumSet.of(
+        WorkbenchType.CRAFTING_TABLE,
+        WorkbenchType.ANVIL,
+        WorkbenchType.CARTOGRAPHY_TABLE,
+        WorkbenchType.GRINDSTONE,
+        WorkbenchType.LOOM,
+        WorkbenchType.SMITHING_TABLE,
+        WorkbenchType.STONECUTTER,
+        WorkbenchType.ENCHANTING_TABLE
+    );
     private final Jossentials plugin;
     private final PaperCommandManager commandManager;
     private final MessageDispatcher messageDispatcher;
     private boolean enabled;
     private boolean commandsRegistered;
+    private boolean listenerRegistered;
 
     public WorkbenchesFeature(Jossentials plugin, PaperCommandManager commandManager, MessageDispatcher messageDispatcher) {
         this.plugin = plugin;
@@ -55,6 +68,10 @@ public final class WorkbenchesFeature implements Feature {
             registerCommands();
             commandsRegistered = true;
         }
+        if (!listenerRegistered) {
+            plugin.getServer().getPluginManager().registerEvents(new WorkbenchInventoryListener(plugin), plugin);
+            listenerRegistered = true;
+        }
         enabled = true;
     }
 
@@ -76,6 +93,9 @@ public final class WorkbenchesFeature implements Feature {
 
     private void registerReplacements() {
         for (WorkbenchType type : WorkbenchType.values()) {
+            if (!COMMAND_TYPES.contains(type)) {
+                continue;
+            }
             String aliasKey = "workbench_" + type.key();
             String path = "workbenches." + type.key();
             boolean enabled = plugin.configs().workbenches().getBoolean(path + ".enabled", true);
@@ -101,6 +121,9 @@ public final class WorkbenchesFeature implements Feature {
     }
 
     private void registerIfEnabled(WorkbenchType type, Runnable registrar) {
+        if (!COMMAND_TYPES.contains(type)) {
+            return;
+        }
         String path = "workbenches." + type.key();
         boolean enabled = plugin.configs().workbenches().getBoolean(path + ".enabled", true);
         var commands = plugin.configs().workbenches().getStringList(path + ".commands");

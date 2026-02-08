@@ -6,8 +6,10 @@ import gg.jos.jossentials.Jossentials;
 import gg.jos.jossentials.util.MessageDispatcher;
 import gg.jos.jossentials.workbenches.WorkbenchType;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public abstract class WorkbenchCommandBase extends BaseCommand {
+    public static final String METADATA_KEY = "jossentials_workbench_open";
     protected final Jossentials plugin;
     protected final MessageDispatcher messageDispatcher;
     protected final WorkbenchType type;
@@ -27,6 +29,7 @@ public abstract class WorkbenchCommandBase extends BaseCommand {
             messageDispatcher.send(player, "messages.no-permission", "<red>You do not have permission.");
             return;
         }
+        player.setMetadata(METADATA_KEY, new FixedMetadataValue(plugin, type.key()));
         plugin.scheduler().runEntity(player, () -> type.open(player));
     }
 }

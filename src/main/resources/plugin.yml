@@ -143,18 +143,6 @@ permissions:
   jossentials.workbench.enchanting_table:
     description: Open the enchanting table workbench.
     default: true
-  jossentials.workbench.brewing_stand:
-    description: Open the brewing stand workbench.
-    default: true
-  jossentials.workbench.furnace:
-    description: Open the furnace workbench.
-    default: true
-  jossentials.workbench.blast_furnace:
-    description: Open the blast furnace workbench.
-    default: true
-  jossentials.workbench.smoker:
-    description: Open the smoker workbench.
-    default: true
   jossentials.reload:
     description: Reload Jossentials configuration.
     default: op
