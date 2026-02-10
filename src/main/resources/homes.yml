@@ -28,6 +28,15 @@ homes:
     title: "Personal Homes"
     # gui size in slots when no structure is provided
     size: 27
+    # click types for gui actions
+    # bedrock tip: use SHIFT_LEFT for delete since right-click isn't available
+    actions:
+      set:
+        - LEFT
+      teleport:
+        - LEFT
+      delete:
+        - SHIFT_LEFT
     # show locked slots when the player lacks permission
     show-locked-slots: true
     # gui layout, each string is a row of 9 characters
@@ -50,7 +59,7 @@ homes:
         name: "<#a6e3a1>★ Home #%slot%"
         lore:
           - "<#d3d3d3>Left-Click to <#a6e3a1>Teleport."
-          - "<#d3d3d3>Right-Click to <#f38ba8>Delete."
+          - "<#d3d3d3>Shift Left-Click to <#f38ba8>Delete."
         # hide the vanilla tooltip for this item
         hide-tooltip: false
       delete-confirm:

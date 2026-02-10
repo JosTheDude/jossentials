@@ -80,6 +80,9 @@ public final class HomesSlotItem extends AbstractItem {
             return;
         }
         if (existing == null) {
+            if (!settings.isSetClick(clickType)) {
+                return;
+            }
             HomeLocation location = HomeLocation.fromLocation(player.getLocation());
             homesService.setHome(player.getUniqueId(), slot, location).whenComplete((success, throwable) -> {
                 plugin.scheduler().runEntity(player, () -> {
@@ -98,7 +101,7 @@ public final class HomesSlotItem extends AbstractItem {
             });
             return;
         }
-        if (clickType.isRightClick()) {
+        if (settings.isDeleteClick(clickType)) {
             if (settings.deleteConfirmationEnabled) {
                 int windowSeconds = settings.deleteConfirmationWindowSeconds;
                 long windowMillis = windowSeconds * 1000L;
@@ -129,7 +132,7 @@ public final class HomesSlotItem extends AbstractItem {
             });
             return;
         }
-        if (clickType.isLeftClick()) {
+        if (settings.isTeleportClick(clickType)) {
             var location = existing.toLocation();
             if (location == null) {
                 messageDispatcher.send(player, "messages.world-missing", "<red>That world is no longer available.");
