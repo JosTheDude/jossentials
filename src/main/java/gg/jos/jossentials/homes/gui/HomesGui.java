@@ -92,6 +92,7 @@ public final class HomesGui {
         Gui gui = builder.build();
 
         List<Integer> homeSlots = resolveHomeSlots(rawStructure, size);
+        List<Integer> actionSlots = resolveActionSlots(homeSlots, size);
         int maxSlots = plugin.configs().homes().getInt("homes.max-slots", 5);
         maxSlots = Math.min(maxSlots, homeSlots.size());
         boolean showLocked = plugin.configs().homes().getBoolean("homes.gui.show-locked-slots", true);
@@ -105,20 +106,35 @@ public final class HomesGui {
             if (!hasPermission && !hasHome && !showLocked) {
                 continue;
             }
-            Item item = new HomesSlotItem(
-                plugin,
-                homesService,
+            HomesSlotItem iconItem = new HomesSlotItem(
                 itemFactory,
                 player,
                 slotNumber,
                 permission,
                 homes,
                 messageDispatcher,
-                deleteConfirmationManager,
                 teleportService,
                 settings
             );
-            gui.setItem(index, item);
+            gui.setItem(index, iconItem);
+
+            if (i < actionSlots.size()) {
+                int actionIndex = actionSlots.get(i);
+                Item actionItem = new HomesActionButtonItem(
+                    plugin,
+                    homesService,
+                    itemFactory,
+                    player,
+                    slotNumber,
+                    permission,
+                    homes,
+                    messageDispatcher,
+                    deleteConfirmationManager,
+                    settings,
+                    iconItem
+                );
+                gui.setItem(actionIndex, actionItem);
+            }
         }
 
         return gui;
@@ -158,6 +174,28 @@ public final class HomesGui {
         }
         List<Integer> validated = new ArrayList<>();
         for (Integer index : homeSlots) {
+            if (index != null && index >= 0 && index < size) {
+                validated.add(index);
+            }
+        }
+        return validated;
+    }
+
+    private List<Integer> resolveActionSlots(List<Integer> homeSlots, int size) {
+        List<Integer> actionSlots = plugin.configs().homes().getIntegerList("homes.gui.action-slots");
+        if (actionSlots.isEmpty()) {
+            for (Integer homeSlot : homeSlots) {
+                if (homeSlot == null) {
+                    continue;
+                }
+                int below = homeSlot + 9;
+                if (below >= 0 && below < size) {
+                    actionSlots.add(below);
+                }
+            }
+        }
+        List<Integer> validated = new ArrayList<>();
+        for (Integer index : actionSlots) {
             if (index != null && index >= 0 && index < size) {
                 validated.add(index);
             }

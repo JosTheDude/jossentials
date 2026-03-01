@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import gg.jos.jossentials.teleport.WarmupTeleportManager;
 import gg.jos.jossentials.util.SchedulerAdapter;
+import gg.jos.jossentials.util.TeleportUtil;
 
 import java.util.UUID;
 
@@ -41,9 +42,10 @@ public final class HomesTeleportService implements Listener {
         HomesSettings current = settings;
         if (!current.warmupEnabled() || player.hasPermission(current.bypassPermission())) {
             scheduler.runEntity(player, () -> {
-                player.teleport(destination);
-                String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
-                messageDispatcher.sendWithKey(player, "messages.home-teleported", message.replace("%slot%", String.valueOf(slot)));
+                if (TeleportUtil.teleportAndNormalizeDamageState(player, destination)) {
+                    String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
+                    messageDispatcher.sendWithKey(player, "messages.home-teleported", message.replace("%slot%", String.valueOf(slot)));
+                }
             });
             return;
         }
@@ -74,9 +76,10 @@ public final class HomesTeleportService implements Listener {
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                currentPlayer.teleport(pending.destination());
-                String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
-                messageDispatcher.sendWithKey(currentPlayer, "messages.home-teleported", message.replace("%slot%", String.valueOf(pending.payload())));
+                if (TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination())) {
+                    String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
+                    messageDispatcher.sendWithKey(currentPlayer, "messages.home-teleported", message.replace("%slot%", String.valueOf(pending.payload())));
+                }
             }
         );
     }

@@ -13,9 +13,13 @@ messages:
       # title fade out duration in ticks
       fade-out-ticks: 10
     overrides:
-    # per-message delivery overrides
-    # home-teleport-warmup: actionbar
-    # home-teleport-cancelled: actionbar
+      # per-message delivery overrides
+      # home-teleport-warmup: actionbar
+      # home-teleport-cancelled: actionbar
+      tpa-here-request-received: message
+      tpa-request-cancelled-target: message
+      tpa-request-received: message
+
   sounds:
     # enable or disable all sounds
     enabled: true
@@ -48,6 +52,10 @@ messages:
         name: BLOCK_NOTE_BLOCK_BASS
         volume: 0.8
         pitch: 0.6
+      home-set-delay:
+        name: BLOCK_NOTE_BLOCK_HAT
+        volume: 0.6
+        pitch: 0.8
       home-deleted:
         name: BLOCK_NOTE_BLOCK_PLING
         volume: 0.8
@@ -136,7 +144,7 @@ messages:
   home-set-failed: "<#f38ba8>Failed to set home."
   home-deleted: "<#d3d3d3>Home <u>%slot%</u> deleted."
   home-delete-failed: "<#f38ba8>Failed to delete home."
-  home-delete-confirm: "<#d3d3d3>Right-click again within <u>%seconds%s</u> to delete home <#d3d3d3>%slot%</#d3d3d3>."
+  home-delete-confirm: "<#d3d3d3>Left-click again within <u>%seconds%s</u> to delete home <#d3d3d3>%slot%</#d3d3d3>."
   home-teleported: "<#d3d3d3>Teleported to home <u>%slot%</u>."
   home-teleport-warmup: "<#d3d3d3>Teleporting in <u>%seconds%s</u>..."
   home-teleport-cancelled: "<#f38ba8>Teleport cancelled."
@@ -144,9 +152,9 @@ messages:
   tpa-self: "<#f38ba8>You cannot send a teleport request to yourself."
   tpa-already-pending: "<#f38ba8>You already have a pending teleport request."
   tpa-request-sent: "<#d3d3d3>Teleport request sent to <u>%target%</u>."
-  tpa-request-received: "<#d3d3d3><u>%requester%</u> wants to teleport to you. Type <u>/tpaccept %requester%</u>."
+  tpa-request-received: "<#d3d3d3><u>%requester%</u> wants to teleport to you. Type <click:run_command:/tpaccept %requester%><u>/tpaccept %requester%</u></clicK>."
   tpa-here-request-sent: "<#d3d3d3>Teleport-here request sent to <u>%target%</u>."
-  tpa-here-request-received: "<#d3d3d3><u>%requester%</u> wants you to teleport to them. Type <#d3d3d3>/tpaccept %requester%</#d3d3d3>."
+  tpa-here-request-received: "<#d3d3d3><u>%requester%</u> wants you to teleport to them. Type <#d3d3d3><click:run_command:/tpaccept %requester%>/tpaccept %requester%</click></#d3d3d3>."
   tpa-request-accepted: "<#a6e3a1>Your teleport request was accepted."
   tpa-request-accepted-target: "<#a6e3a1>Accepted teleport request from <u>%requester%</u>."
   tpa-request-denied: "<#f38ba8>Your teleport request was denied."
@@ -156,13 +164,13 @@ messages:
   tpa-request-expired: "<#f38ba8>Your teleport request expired."
   tpa-request-expired-target: "<#f38ba8>Teleport request from <u>%requester%</u> expired."
   tpa-no-pending: "<#f38ba8>You have no pending teleport requests."
-  tpa-multiple-pending: "<#f9e2af>Multiple requests pending. Use <u>/tpaccept <player></u>."
-  tpa-target-disabled: "<#f38ba8><u>%target%</u> has teleport requests disabled."
-  tpa-toggle-on: "<#a6e3a1>Teleport requests enabled."
-  tpa-toggle-off: "<#f38ba8>Teleport requests disabled."
+  tpa-multiple-pending: "<#f9e2af>Multiple requests pending. Use <u><click:run_command:/tpaccept %requester%>/tpaccept <player></click></u>."
   tpa-teleport-warmup: "<#d3d3d3>Teleporting to <u>%target%</u> in <u>%seconds%s</u>..."
   tpa-teleported: "<#a6e3a1>Teleported to <u>%target%</u>."
   tpa-teleport-cancelled: "<#f38ba8>Teleport cancelled."
+  tpa-target-disabled: "<#f38ba8><u>%target%</u> has teleport requests disabled."
+  tpa-toggle-on: "<#a6e3a1>Teleport requests enabled."
+  tpa-toggle-off: "<#f38ba8>Teleport requests disabled."
   spawn-set: "<#a6e3a1>Spawn set."
   spawn-teleported: "<#a6e3a1>Teleported to Spawn!"
   spawn-teleport-warmup: "<#d3d3d3>Teleporting in <u>%seconds%s</u>..."

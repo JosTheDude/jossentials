@@ -4,6 +4,7 @@ import gg.jos.jossentials.Jossentials;
 import gg.jos.jossentials.teleport.WarmupTeleportManager;
 import gg.jos.jossentials.util.MessageDispatcher;
 import gg.jos.jossentials.util.SchedulerAdapter;
+import gg.jos.jossentials.util.TeleportUtil;
 import gg.jos.jossentials.warps.WarpsSettings;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -41,9 +42,10 @@ public final class WarpsTeleportService implements Listener {
         WarpsSettings current = settings;
         if (!current.warmupEnabled() || player.hasPermission(current.bypassPermission())) {
             scheduler.runEntity(player, () -> {
-                player.teleport(destination);
-                String message = plugin.configs().messages().getString("messages.warp-teleported", "<green>Teleported to <gold>%warp%</gold>.");
-                messageDispatcher.sendWithKey(player, "messages.warp-teleported", message.replace("%warp%", warpName));
+                if (TeleportUtil.teleportAndNormalizeDamageState(player, destination)) {
+                    String message = plugin.configs().messages().getString("messages.warp-teleported", "<green>Teleported to <gold>%warp%</gold>.");
+                    messageDispatcher.sendWithKey(player, "messages.warp-teleported", message.replace("%warp%", warpName));
+                }
             });
             return;
         }
@@ -74,9 +76,10 @@ public final class WarpsTeleportService implements Listener {
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                currentPlayer.teleport(pending.destination());
-                String message = plugin.configs().messages().getString("messages.warp-teleported", "<green>Teleported to <gold>%warp%</gold>.");
-                messageDispatcher.sendWithKey(currentPlayer, "messages.warp-teleported", message.replace("%warp%", String.valueOf(pending.payload())));
+                if (TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination())) {
+                    String message = plugin.configs().messages().getString("messages.warp-teleported", "<green>Teleported to <gold>%warp%</gold>.");
+                    messageDispatcher.sendWithKey(currentPlayer, "messages.warp-teleported", message.replace("%warp%", String.valueOf(pending.payload())));
+                }
             }
         );
     }

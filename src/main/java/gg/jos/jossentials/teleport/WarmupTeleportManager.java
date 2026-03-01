@@ -85,6 +85,9 @@ public final class WarmupTeleportManager {
     }
 
     public void onMove(PlayerMoveEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         PendingTeleport currentTeleport = pending.get(event.getPlayer().getUniqueId());
         if (currentTeleport == null) {
             return;
@@ -108,6 +111,9 @@ public final class WarmupTeleportManager {
 
     public void onDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        if (event.isCancelled()) {
             return;
         }
         WarmupSettings current = settingsSupplier.get();

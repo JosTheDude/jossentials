@@ -3,6 +3,7 @@ package gg.jos.jossentials.spawn;
 import gg.jos.jossentials.Jossentials;
 import gg.jos.jossentials.teleport.WarmupTeleportManager;
 import gg.jos.jossentials.util.MessageDispatcher;
+import gg.jos.jossentials.util.TeleportUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,9 +36,10 @@ public final class SpawnTeleportService implements Listener {
         SpawnSettings current = settings;
         if (!current.warmupEnabled() || player.hasPermission(current.bypassPermission())) {
             plugin.scheduler().runEntity(player, () -> {
-                player.teleport(destination);
-                String message = plugin.configs().messages().getString("messages.spawn-teleported", "<green>Teleported to spawn.");
-                messageDispatcher.sendWithKey(player, "messages.spawn-teleported", message);
+                if (TeleportUtil.teleportAndNormalizeDamageState(player, destination)) {
+                    String message = plugin.configs().messages().getString("messages.spawn-teleported", "<green>Teleported to spawn.");
+                    messageDispatcher.sendWithKey(player, "messages.spawn-teleported", message);
+                }
             });
             return;
         }
@@ -62,9 +64,10 @@ public final class SpawnTeleportService implements Listener {
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                currentPlayer.teleport(pending.destination());
-                String message = plugin.configs().messages().getString("messages.spawn-teleported", "<green>Teleported to spawn.");
-                messageDispatcher.sendWithKey(currentPlayer, "messages.spawn-teleported", message);
+                if (TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination())) {
+                    String message = plugin.configs().messages().getString("messages.spawn-teleported", "<green>Teleported to spawn.");
+                    messageDispatcher.sendWithKey(currentPlayer, "messages.spawn-teleported", message);
+                }
             }
         );
     }

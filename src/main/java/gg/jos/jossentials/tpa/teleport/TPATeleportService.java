@@ -4,6 +4,7 @@ import gg.jos.jossentials.Jossentials;
 import gg.jos.jossentials.tpa.TPASettings;
 import gg.jos.jossentials.teleport.WarmupTeleportManager;
 import gg.jos.jossentials.util.MessageDispatcher;
+import gg.jos.jossentials.util.TeleportUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,9 +43,10 @@ public final class TPATeleportService implements Listener {
         Location destination = target.getLocation();
         if (!current.warmupEnabled() || requester.hasPermission(current.bypassPermission())) {
             scheduler.runEntity(requester, () -> {
-                requester.teleport(destination);
-                String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
-                messageDispatcher.sendWithKey(requester, "messages.tpa-teleported", message.replace("%target%", target.getName()));
+                if (TeleportUtil.teleportAndNormalizeDamageState(requester, destination)) {
+                    String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
+                    messageDispatcher.sendWithKey(requester, "messages.tpa-teleported", message.replace("%target%", target.getName()));
+                }
             });
             return;
         }
@@ -75,9 +77,10 @@ public final class TPATeleportService implements Listener {
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                currentPlayer.teleport(pending.destination());
-                String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
-                messageDispatcher.sendWithKey(currentPlayer, "messages.tpa-teleported", message.replace("%target%", String.valueOf(pending.payload())));
+                if (TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination())) {
+                    String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
+                    messageDispatcher.sendWithKey(currentPlayer, "messages.tpa-teleported", message.replace("%target%", String.valueOf(pending.payload())));
+                }
             }
         );
     }

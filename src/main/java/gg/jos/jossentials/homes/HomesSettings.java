@@ -10,6 +10,7 @@ import java.util.List;
 public final class HomesSettings implements WarmupSettings {
     public final boolean deleteConfirmationEnabled;
     public final int deleteConfirmationWindowSeconds;
+    public final int deleteToSetDelayMillis;
     public final boolean warmupEnabled;
     public final int warmupSeconds;
     public final boolean cancelOnMove;
@@ -21,6 +22,7 @@ public final class HomesSettings implements WarmupSettings {
     private final EnumSet<ClickType> deleteClicks;
 
     public HomesSettings(boolean deleteConfirmationEnabled, int deleteConfirmationWindowSeconds,
+                         int deleteToSetDelayMillis,
                          boolean warmupEnabled, int warmupSeconds,
                          boolean cancelOnMove, boolean cancelOnDamage,
                          double movementThreshold, String bypassPermission,
@@ -28,6 +30,7 @@ public final class HomesSettings implements WarmupSettings {
                          EnumSet<ClickType> deleteClicks) {
         this.deleteConfirmationEnabled = deleteConfirmationEnabled;
         this.deleteConfirmationWindowSeconds = deleteConfirmationWindowSeconds;
+        this.deleteToSetDelayMillis = Math.max(0, deleteToSetDelayMillis);
         this.warmupEnabled = warmupEnabled;
         this.warmupSeconds = warmupSeconds;
         this.cancelOnMove = cancelOnMove;
@@ -42,6 +45,7 @@ public final class HomesSettings implements WarmupSettings {
     public static HomesSettings fromConfig(FileConfiguration config) {
         boolean deleteConfirmationEnabled = config.getBoolean("homes.delete-confirmation.enabled", true);
         int deleteConfirmationWindowSeconds = config.getInt("homes.delete-confirmation.window-seconds", 5);
+        int deleteToSetDelayMillis = config.getInt("homes.delete-to-set-delay-ms", 750);
         boolean warmupEnabled = config.getBoolean("homes.teleport.warmup.enabled", true);
         int warmupSeconds = config.getInt("homes.teleport.warmup.seconds", 3);
         boolean cancelOnMove = config.getBoolean("homes.teleport.cancel-on-move", true);
@@ -55,6 +59,7 @@ public final class HomesSettings implements WarmupSettings {
         return new HomesSettings(
             deleteConfirmationEnabled,
             deleteConfirmationWindowSeconds,
+            deleteToSetDelayMillis,
             warmupEnabled,
             warmupSeconds,
             cancelOnMove,

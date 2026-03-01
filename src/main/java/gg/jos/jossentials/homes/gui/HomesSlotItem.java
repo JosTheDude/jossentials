@@ -1,11 +1,8 @@
 package gg.jos.jossentials.homes.gui;
 
-import gg.jos.jossentials.Jossentials;
 import gg.jos.jossentials.homes.HomeLocation;
-import gg.jos.jossentials.homes.HomesService;
 import gg.jos.jossentials.homes.HomesSettings;
 import gg.jos.jossentials.homes.teleport.HomesTeleportService;
-import gg.jos.jossentials.homes.util.DeleteConfirmationManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import xyz.xenondevs.invui.Click;
@@ -15,33 +12,26 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import java.util.Map;
 
 public final class HomesSlotItem extends AbstractItem {
-    private final Jossentials plugin;
-    private final HomesService homesService;
     private final HomesItemFactory itemFactory;
     private final Player player;
     private final int slot;
     private final String permission;
     private final Map<Integer, HomeLocation> homes;
     private final gg.jos.jossentials.util.MessageDispatcher messageDispatcher;
-    private final DeleteConfirmationManager deleteConfirmationManager;
     private final HomesTeleportService teleportService;
     private final HomesSettings settings;
 
-    public HomesSlotItem(Jossentials plugin, HomesService homesService, HomesItemFactory itemFactory,
+    public HomesSlotItem(HomesItemFactory itemFactory,
                          Player player, int slot, String permission, Map<Integer, HomeLocation> homes,
                          gg.jos.jossentials.util.MessageDispatcher messageDispatcher,
-                         DeleteConfirmationManager deleteConfirmationManager,
                          HomesTeleportService teleportService,
                          HomesSettings settings) {
-        this.plugin = plugin;
-        this.homesService = homesService;
         this.itemFactory = itemFactory;
         this.player = player;
         this.slot = slot;
         this.permission = permission;
         this.homes = homes;
         this.messageDispatcher = messageDispatcher;
-        this.deleteConfirmationManager = deleteConfirmationManager;
         this.teleportService = teleportService;
         this.settings = settings;
     }
@@ -59,12 +49,6 @@ public final class HomesSlotItem extends AbstractItem {
         if (location == null) {
             return itemFactory.create("homes.gui.items.empty", slot, permission);
         }
-        if (settings.deleteConfirmationEnabled) {
-            long windowMillis = settings.deleteConfirmationWindowSeconds * 1000L;
-            if (deleteConfirmationManager.isPending(player.getUniqueId(), slot, windowMillis)) {
-                return itemFactory.create("homes.gui.items.delete-confirm", slot, permission);
-            }
-        }
         return itemFactory.create("homes.gui.items.set", slot, permission);
     }
 
@@ -80,56 +64,6 @@ public final class HomesSlotItem extends AbstractItem {
             return;
         }
         if (existing == null) {
-            if (!settings.isSetClick(clickType)) {
-                return;
-            }
-            HomeLocation location = HomeLocation.fromLocation(player.getLocation());
-            homesService.setHome(player.getUniqueId(), slot, location).whenComplete((success, throwable) -> {
-                plugin.scheduler().runEntity(player, () -> {
-                    if (!player.isOnline()) {
-                        return;
-                    }
-                    if (throwable != null) {
-                        messageDispatcher.send(player, "messages.home-set-failed", "<red>Failed to set home.");
-                        return;
-                    }
-                    homes.put(slot, location);
-                    notifyWindows();
-                    String message = plugin.configs().messages().getString("messages.home-set", "<green>Home <gold>%slot%</gold> set.");
-                    messageDispatcher.sendWithKey(player, "messages.home-set", message.replace("%slot%", String.valueOf(slot)));
-                });
-            });
-            return;
-        }
-        if (settings.isDeleteClick(clickType)) {
-            if (settings.deleteConfirmationEnabled) {
-                int windowSeconds = settings.deleteConfirmationWindowSeconds;
-                long windowMillis = windowSeconds * 1000L;
-                if (!deleteConfirmationManager.confirm(player.getUniqueId(), slot, windowMillis)) {
-                    String message = plugin.configs().messages().getString("messages.home-delete-confirm", "<yellow>Right-click again to delete.");
-                    message = message.replace("%seconds%", String.valueOf(windowSeconds))
-                        .replace("%slot%", String.valueOf(slot));
-                    messageDispatcher.sendWithKey(player, "messages.home-delete-confirm", message);
-                    notifyWindows();
-                    return;
-                }
-            }
-            homesService.deleteHome(player.getUniqueId(), slot).whenComplete((success, throwable) -> {
-                plugin.scheduler().runEntity(player, () -> {
-                    if (!player.isOnline()) {
-                        return;
-                    }
-                    if (throwable != null) {
-                        messageDispatcher.send(player, "messages.home-delete-failed", "<red>Failed to delete home.");
-                        return;
-                    }
-                    homes.remove(slot);
-                    deleteConfirmationManager.clear(player.getUniqueId(), slot);
-                    notifyWindows();
-                    String message = plugin.configs().messages().getString("messages.home-deleted", "<green>Home <gold>%slot%</gold> deleted.");
-                    messageDispatcher.sendWithKey(player, "messages.home-deleted", message.replace("%slot%", String.valueOf(slot)));
-                });
-            });
             return;
         }
         if (settings.isTeleportClick(clickType)) {
@@ -141,5 +75,9 @@ public final class HomesSlotItem extends AbstractItem {
             player.closeInventory();
             teleportService.teleport(player, location, slot);
         }
+    }
+
+    public void refresh() {
+        notifyWindows();
     }
 }
