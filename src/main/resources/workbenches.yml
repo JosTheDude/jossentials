@@ -7,8 +7,9 @@ workbenches:
     commands:
       - craft
       - crafting
-      - workbench
       - craftingtable
+      - wb
+      - workbench
     # permission required to use these commands
     permission: jossentials.workbench.crafting_table
   anvil:
@@ -46,7 +47,5 @@ workbenches:
   enchanting_table:
     enabled: true
     commands:
-      - enchant
-      - enchanting
       - enchantingtable
     permission: jossentials.workbench.enchanting_table

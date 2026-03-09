@@ -170,7 +170,7 @@ public final class HomesGui {
             homeSlots = plugin.configs().homes().getIntegerList("homes.gui.slot-indices");
         }
         if (homeSlots.isEmpty() && rawStructure != null && !rawStructure.isEmpty()) {
-            homeSlots = extractHomeSlotsFromStructure(rawStructure, size);
+            homeSlots = extractSlotsFromStructure(rawStructure, size, 'H');
         }
         if (homeSlots.isEmpty()) {
             int maxSlots = plugin.configs().homes().getInt("homes.max-slots", 5);
@@ -190,7 +190,11 @@ public final class HomesGui {
 
     private List<Integer> resolveActionSlots(List<Integer> homeSlots, int size) {
         List<Integer> actionSlots = plugin.configs().homes().getIntegerList("homes.gui.action-slots");
-        if (actionSlots.isEmpty()) {
+        List<String> rawStructure = plugin.configs().homes().getStringList("homes.gui.structure");
+        if (actionSlots.isEmpty() && rawStructure != null && !rawStructure.isEmpty()) {
+            actionSlots = extractSlotsFromStructure(rawStructure, size, 'A');
+        }
+        if (actionSlots.isEmpty() && (rawStructure == null || rawStructure.isEmpty())) {
             for (Integer homeSlot : homeSlots) {
                 if (homeSlot == null) {
                     continue;
@@ -210,13 +214,13 @@ public final class HomesGui {
         return validated;
     }
 
-    private List<Integer> extractHomeSlotsFromStructure(List<String> rawStructure, int size) {
+    private List<Integer> extractSlotsFromStructure(List<String> rawStructure, int size, char target) {
         List<Integer> indices = new ArrayList<>();
         int rows = rawStructure.size();
         for (int row = 0; row < rows; row++) {
             String line = rawStructure.get(row).replace(" ", "");
             for (int col = 0; col < line.length() && col < 9; col++) {
-                if (line.charAt(col) == 'H') {
+                if (line.charAt(col) == target) {
                     int index = row * 9 + col;
                     if (index >= 0 && index < size) {
                         indices.add(index);
