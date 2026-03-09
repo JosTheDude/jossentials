@@ -28,6 +28,8 @@ homes:
   gui:
     # gui title shown to players
     title: "Personal Homes"
+    # gui title shown when viewing another player's homes
+    other-title: "%player%'s Homes"
     # gui size in slots when no structure is provided
     size: 27
     # click types for gui actions on the home icon

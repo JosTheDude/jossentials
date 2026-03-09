@@ -9,10 +9,10 @@ website: https://jos.gg/
 commands:
   homes:
     description: Open the homes GUI.
-    usage: /homes
+    usage: /homes [player]
   spawn:
     description: Teleport to spawn.
-    usage: /spawn
+    usage: /spawn [player]
   setspawn:
     description: Set the server spawn.
     usage: /setspawn
@@ -39,7 +39,7 @@ commands:
     usage: /tptoggle
   warp:
     description: Teleport to a warp.
-    usage: /warp <name>
+    usage: /warp <name> [player]
   warps:
     description: List available warps.
     usage: /warps
@@ -74,6 +74,9 @@ permissions:
   jossentials.homes.teleport.bypass:
     description: Bypass homes teleport warmup/cancel checks.
     default: op
+  jossentials.homes.others:
+    description: View another player's homes.
+    default: op
   jossentials.tpa:
     description: Request teleport to a player.
     default: true
@@ -104,6 +107,9 @@ permissions:
   jossentials.spawn.teleport.bypass:
     description: Bypass spawn teleport warmup/cancel checks.
     default: op
+  jossentials.spawn.others:
+    description: Send another player to spawn.
+    default: op
   jossentials.warp:
     description: Teleport to a warp.
     default: true
@@ -118,6 +124,9 @@ permissions:
     default: op
   jossentials.warp.teleport.bypass:
     description: Bypass warp teleport warmup/cancel checks.
+    default: op
+  jossentials.warp.others:
+    description: Send another player to a warp.
     default: op
   jossentials.workbench.crafting_table:
     description: Open the crafting table workbench.

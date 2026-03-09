@@ -19,6 +19,7 @@ public final class HomesActionButtonItem extends AbstractItem {
     private final HomesService homesService;
     private final HomesItemFactory itemFactory;
     private final Player player;
+    private final java.util.UUID playerId;
     private final int slot;
     private final String permission;
     private final Map<Integer, HomeLocation> homes;
@@ -28,7 +29,7 @@ public final class HomesActionButtonItem extends AbstractItem {
     private final HomesSlotItem iconItem;
 
     public HomesActionButtonItem(Jossentials plugin, HomesService homesService, HomesItemFactory itemFactory,
-                                 Player player, int slot, String permission, Map<Integer, HomeLocation> homes,
+                                 Player player, java.util.UUID playerId, int slot, String permission, Map<Integer, HomeLocation> homes,
                                  gg.jos.jossentials.util.MessageDispatcher messageDispatcher,
                                  DeleteConfirmationManager deleteConfirmationManager,
                                  HomesSettings settings,
@@ -37,6 +38,7 @@ public final class HomesActionButtonItem extends AbstractItem {
         this.homesService = homesService;
         this.itemFactory = itemFactory;
         this.player = player;
+        this.playerId = playerId;
         this.slot = slot;
         this.permission = permission;
         this.homes = homes;
@@ -92,7 +94,7 @@ public final class HomesActionButtonItem extends AbstractItem {
                 return;
             }
             HomeLocation location = HomeLocation.fromLocation(player.getLocation());
-            homesService.setHome(player.getUniqueId(), slot, location).whenComplete((success, throwable) -> {
+            homesService.setHome(playerId, slot, location).whenComplete((success, throwable) -> {
                 plugin.scheduler().runEntity(player, () -> {
                     if (!player.isOnline()) {
                         return;
@@ -125,7 +127,7 @@ public final class HomesActionButtonItem extends AbstractItem {
             }
         }
 
-        homesService.deleteHome(player.getUniqueId(), slot).whenComplete((success, throwable) -> {
+        homesService.deleteHome(playerId, slot).whenComplete((success, throwable) -> {
             plugin.scheduler().runEntity(player, () -> {
                 if (!player.isOnline()) {
                     return;

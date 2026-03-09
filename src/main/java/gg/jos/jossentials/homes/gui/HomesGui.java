@@ -43,21 +43,26 @@ public final class HomesGui {
     }
 
     public void open(Player player) {
-        messageDispatcher.send(player, "messages.loading", "");
-        UUID playerId = player.getUniqueId();
+        open(player, player.getUniqueId(), player.getName(), false);
+    }
+
+    public void open(Player viewer, UUID playerId, String playerName, boolean readOnly) {
+        messageDispatcher.send(viewer, "messages.loading", "");
         homesService.loadHomes(playerId).whenComplete((homes, throwable) -> {
-            plugin.scheduler().runEntity(player, () -> {
-                if (!player.isOnline()) {
+            plugin.scheduler().runEntity(viewer, () -> {
+                if (!viewer.isOnline()) {
                     return;
                 }
                 if (throwable != null) {
-                    messageDispatcher.send(player, "messages.database-error", "<red>Could not load homes.");
+                    messageDispatcher.send(viewer, "messages.database-error", "<red>Could not load homes.");
                     return;
                 }
-                Gui gui = buildGui(player, homes);
+                Gui gui = buildGui(viewer, playerId, playerName, readOnly, homes);
+                String titlePath = readOnly ? "homes.gui.other-title" : "homes.gui.title";
+                String title = plugin.configs().homes().getString(titlePath, readOnly ? "<gold>%player%'s Homes" : "<gold>Homes");
                 Window window = Window.builder()
-                    .setViewer(player)
-                    .setTitle(ColorUtil.mini(plugin.configs().homes().getString("homes.gui.title", "<gold>Homes")))
+                    .setViewer(viewer)
+                    .setTitle(ColorUtil.mini(title.replace("%player%", playerName)))
                     .setUpperGui(gui)
                     .build();
                 window.open();
@@ -70,7 +75,7 @@ public final class HomesGui {
         this.settings = settings;
     }
 
-    private Gui buildGui(Player player, Map<Integer, HomeLocation> homes) {
+    private Gui buildGui(Player viewer, UUID playerId, String playerName, boolean readOnly, Map<Integer, HomeLocation> homes) {
         List<String> rawStructure = plugin.configs().homes().getStringList("homes.gui.structure");
         boolean hasStructure = rawStructure != null && !rawStructure.isEmpty();
         int rows = hasStructure ? rawStructure.size() : normalizedSize(plugin.configs().homes().getInt("homes.gui.size", 27)) / 9;
@@ -102,13 +107,14 @@ public final class HomesGui {
             int index = homeSlots.get(i);
             String permission = "jossentials.homes." + slotNumber;
             boolean hasHome = homes.containsKey(slotNumber);
-            boolean hasPermission = player.hasPermission(permission);
+            boolean hasPermission = readOnly || viewer.hasPermission(permission);
             if (!hasPermission && !hasHome && !showLocked) {
                 continue;
             }
             HomesSlotItem iconItem = new HomesSlotItem(
                 itemFactory,
-                player,
+                viewer,
+                readOnly,
                 slotNumber,
                 permission,
                 homes,
@@ -118,13 +124,14 @@ public final class HomesGui {
             );
             gui.setItem(index, iconItem);
 
-            if (i < actionSlots.size()) {
+            if (!readOnly && i < actionSlots.size()) {
                 int actionIndex = actionSlots.get(i);
                 Item actionItem = new HomesActionButtonItem(
                     plugin,
                     homesService,
                     itemFactory,
-                    player,
+                    viewer,
+                    playerId,
                     slotNumber,
                     permission,
                     homes,

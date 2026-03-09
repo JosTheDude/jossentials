@@ -13,7 +13,8 @@ import java.util.Map;
 
 public final class HomesSlotItem extends AbstractItem {
     private final HomesItemFactory itemFactory;
-    private final Player player;
+    private final Player viewer;
+    private final boolean readOnly;
     private final int slot;
     private final String permission;
     private final Map<Integer, HomeLocation> homes;
@@ -22,12 +23,13 @@ public final class HomesSlotItem extends AbstractItem {
     private final HomesSettings settings;
 
     public HomesSlotItem(HomesItemFactory itemFactory,
-                         Player player, int slot, String permission, Map<Integer, HomeLocation> homes,
+                         Player viewer, boolean readOnly, int slot, String permission, Map<Integer, HomeLocation> homes,
                          gg.jos.jossentials.util.MessageDispatcher messageDispatcher,
                          HomesTeleportService teleportService,
                          HomesSettings settings) {
         this.itemFactory = itemFactory;
-        this.player = player;
+        this.viewer = viewer;
+        this.readOnly = readOnly;
         this.slot = slot;
         this.permission = permission;
         this.homes = homes;
@@ -39,7 +41,7 @@ public final class HomesSlotItem extends AbstractItem {
     @Override
     public ItemProvider getItemProvider(Player viewer) {
         HomeLocation location = homes.get(slot);
-        boolean hasPermission = player.hasPermission(permission);
+        boolean hasPermission = readOnly || this.viewer.hasPermission(permission);
         if (location != null && !hasPermission) {
             return itemFactory.create("homes.gui.items.locked-set", slot, permission);
         }
@@ -54,13 +56,13 @@ public final class HomesSlotItem extends AbstractItem {
 
     @Override
     public void handleClick(ClickType clickType, Player clicker, Click click) {
-        if (!player.isOnline()) {
+        if (!clicker.isOnline()) {
             return;
         }
-        boolean hasPermission = player.hasPermission(permission);
+        boolean hasPermission = readOnly || clicker.hasPermission(permission);
         HomeLocation existing = homes.get(slot);
         if (!hasPermission) {
-            messageDispatcher.send(player, "messages.no-permission", "<red>You do not have permission.");
+            messageDispatcher.send(clicker, "messages.no-permission", "<red>You do not have permission.");
             return;
         }
         if (existing == null) {
@@ -69,11 +71,11 @@ public final class HomesSlotItem extends AbstractItem {
         if (settings.isTeleportClick(clickType)) {
             var location = existing.toLocation();
             if (location == null) {
-                messageDispatcher.send(player, "messages.world-missing", "<red>That world is no longer available.");
+                messageDispatcher.send(clicker, "messages.world-missing", "<red>That world is no longer available.");
                 return;
             }
-            player.closeInventory();
-            teleportService.teleport(player, location, slot);
+            clicker.closeInventory();
+            teleportService.teleport(clicker, location, slot);
         }
     }
 

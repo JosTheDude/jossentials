@@ -6,6 +6,7 @@ import gg.jos.jossentials.feature.Feature;
 import gg.jos.jossentials.spawn.command.SetSpawnCommand;
 import gg.jos.jossentials.spawn.command.SpawnCommand;
 import gg.jos.jossentials.util.MessageDispatcher;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
@@ -84,18 +85,25 @@ public final class SpawnFeature implements Feature {
     }
 
     public void teleport(Player player) {
+        teleport(player, null);
+    }
+
+    public boolean teleport(Player player, CommandSender actor) {
         if (!enabled || teleportService == null || spawnService == null) {
             String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(player, "messages.feature-disabled", message.replace("%feature%", "spawn"));
-            return;
+            notifyActor(actor, player, "messages.feature-disabled", message.replace("%feature%", "spawn"));
+            return false;
         }
         var destination = spawnService.getSpawnLocation(player.getWorld());
         if (destination == null) {
             String message = plugin.configs().messages().getString("messages.spawn-not-set", "<red>Spawn has not been set yet.");
             messageDispatcher.sendWithKey(player, "messages.spawn-not-set", message);
-            return;
+            notifyActor(actor, player, "messages.spawn-not-set", message);
+            return false;
         }
-        teleportService.teleport(player, destination);
+        teleportService.teleport(player, destination, actor != null && actor != player);
+        return true;
     }
 
     public void setSpawn(Player player) {
@@ -107,5 +115,16 @@ public final class SpawnFeature implements Feature {
         spawnService.setSpawn(player.getLocation());
         String message = plugin.configs().messages().getString("messages.spawn-set", "<green>Spawn set.");
         messageDispatcher.sendWithKey(player, "messages.spawn-set", message);
+    }
+
+    public Jossentials plugin() {
+        return plugin;
+    }
+
+    private void notifyActor(CommandSender actor, Player target, String key, String message) {
+        if (actor == null || actor == target) {
+            return;
+        }
+        messageDispatcher.sendWithKey(actor, key, message);
     }
 }

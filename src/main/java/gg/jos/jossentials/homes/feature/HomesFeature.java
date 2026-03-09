@@ -14,6 +14,8 @@ import gg.jos.jossentials.util.MessageDispatcher;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
+import java.util.UUID;
+
 public final class HomesFeature implements Feature {
     private final Jossentials plugin;
     private final Database database;
@@ -107,5 +109,18 @@ public final class HomesFeature implements Feature {
             return;
         }
         homesGui.open(player);
+    }
+
+    public void open(Player viewer, UUID targetId, String targetName) {
+        if (!enabled || homesGui == null) {
+            String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
+            messageDispatcher.sendWithKey(viewer, "messages.feature-disabled", message.replace("%feature%", "homes"));
+            return;
+        }
+        homesGui.open(viewer, targetId, targetName, true);
+    }
+
+    public Jossentials plugin() {
+        return plugin;
     }
 }

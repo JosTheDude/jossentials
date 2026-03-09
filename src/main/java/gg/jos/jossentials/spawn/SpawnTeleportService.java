@@ -30,11 +30,15 @@ public final class SpawnTeleportService implements Listener {
     }
 
     public void teleport(Player player, Location destination) {
+        teleport(player, destination, false);
+    }
+
+    public void teleport(Player player, Location destination, boolean skipWarmup) {
         if (!player.isOnline()) {
             return;
         }
         SpawnSettings current = settings;
-        if (!current.warmupEnabled() || player.hasPermission(current.bypassPermission())) {
+        if (skipWarmup || !current.warmupEnabled() || player.hasPermission(current.bypassPermission())) {
             plugin.scheduler().runEntity(player, () -> {
                 if (TeleportUtil.teleportAndNormalizeDamageState(player, destination)) {
                     String message = plugin.configs().messages().getString("messages.spawn-teleported", "<green>Teleported to spawn.");

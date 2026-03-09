@@ -14,6 +14,7 @@ import gg.jos.jossentials.warps.command.WarpCommand;
 import gg.jos.jossentials.warps.command.WarpsCommand;
 import gg.jos.jossentials.warps.teleport.WarpsTeleportService;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
@@ -103,35 +104,45 @@ public final class WarpsFeature implements Feature {
     }
 
     public void warp(Player player, String warpName) {
+        warp(player, warpName, null);
+    }
+
+    public boolean warp(Player player, String warpName, CommandSender actor) {
         if (!enabled || warpsService == null || teleportService == null) {
             String message = plugin.configs().messages().getString("messages.feature-disabled", "<red>This feature is disabled.");
             messageDispatcher.sendWithKey(player, "messages.feature-disabled", message.replace("%feature%", "warps"));
-            return;
+            notifyActor(actor, player, "messages.feature-disabled", message.replace("%feature%", "warps"));
+            return false;
         }
         if (!warpsService.isValidName(warpName)) {
             String message = plugin.configs().messages().getString("messages.warp-name-invalid", "<red>That warp name is invalid.");
             messageDispatcher.sendWithKey(player, "messages.warp-name-invalid", message);
-            return;
+            notifyActor(actor, player, "messages.warp-name-invalid", message);
+            return false;
         }
         if (!warpsService.isLoaded()) {
             String message = plugin.configs().messages().getString("messages.warp-loading", "<gray>Loading warps...");
             messageDispatcher.sendWithKey(player, "messages.warp-loading", message);
-            return;
+            notifyActor(actor, player, "messages.warp-loading", message);
+            return false;
         }
         String normalized = warpsService.normalizeName(warpName);
         WarpLocation warp = warpsService.getWarp(normalized);
         if (warp == null) {
             String message = plugin.configs().messages().getString("messages.warp-not-found", "<red>Warp not found.");
             messageDispatcher.sendWithKey(player, "messages.warp-not-found", message.replace("%warp%", normalized));
-            return;
+            notifyActor(actor, player, "messages.warp-not-found", message.replace("%warp%", normalized));
+            return false;
         }
         Location destination = warp.toLocation();
         if (destination == null) {
             String message = plugin.configs().messages().getString("messages.world-missing", "<red>That world is no longer available.");
             messageDispatcher.sendWithKey(player, "messages.world-missing", message);
-            return;
+            notifyActor(actor, player, "messages.world-missing", message);
+            return false;
         }
-        teleportService.teleport(player, destination, normalized);
+        teleportService.teleport(player, destination, normalized, actor != null && actor != player);
+        return true;
     }
 
     public void setWarp(Player player, String warpName) {
@@ -229,5 +240,16 @@ public final class WarpsFeature implements Feature {
         String joined = String.join(", ", names);
         String message = plugin.configs().messages().getString("messages.warp-list", "<gray>Warps: <white>%warps%</white>.");
         messageDispatcher.sendWithKey(player, "messages.warp-list", message.replace("%warps%", joined));
+    }
+
+    public Jossentials plugin() {
+        return plugin;
+    }
+
+    private void notifyActor(CommandSender actor, Player target, String key, String message) {
+        if (actor == null || actor == target) {
+            return;
+        }
+        messageDispatcher.sendWithKey(actor, key, message);
     }
 }

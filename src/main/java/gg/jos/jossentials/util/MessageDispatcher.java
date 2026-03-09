@@ -2,6 +2,7 @@ package gg.jos.jossentials.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+import org.bukkit.command.CommandSender;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -26,6 +27,11 @@ public final class MessageDispatcher {
         sendWithKey(player, messageKey, message);
     }
 
+    public void send(CommandSender sender, String messageKey, String fallbackMessage) {
+        String message = plugin.configs().messages().getString(messageKey, fallbackMessage);
+        sendWithKey(sender, messageKey, message);
+    }
+
     public void sendWithKey(Player player, String messageKey, String rawMessage) {
         if (rawMessage == null || rawMessage.isEmpty()) {
             return;
@@ -39,6 +45,17 @@ public final class MessageDispatcher {
             default -> player.sendMessage(component);
         }
         playSound(player, current, messageKey);
+    }
+
+    public void sendWithKey(CommandSender sender, String messageKey, String rawMessage) {
+        if (sender instanceof Player player) {
+            sendWithKey(player, messageKey, rawMessage);
+            return;
+        }
+        if (rawMessage == null || rawMessage.isEmpty()) {
+            return;
+        }
+        sender.sendMessage(ColorUtil.mini(rawMessage));
     }
 
     private void sendTitle(Player player, Component title, DeliverySettings current) {
