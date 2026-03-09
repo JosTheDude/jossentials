@@ -50,6 +50,21 @@ commands:
     description: Delete a warp.
     usage: /delwarp <name>
     aliases: [deletewarp]
+  tp:
+    description: Teleport to another player, or teleport one player to another.
+    usage: /tp <player> [target]
+  tppos:
+    description: Teleport to coordinates, or teleport a player to coordinates.
+    usage: /tppos [player] <x> <y> <z> [world]
+  near:
+    description: List nearby players.
+    usage: /near [radius]
+  speed:
+    description: Change your walk or fly speed.
+    usage: /speed <walk|fly> <speed>
+  seen:
+    description: Check when a player was last seen.
+    usage: /seen <player>
   jossentials:
     description: Jossentials main command.
     usage: /jossentials reload
@@ -154,6 +169,27 @@ permissions:
     default: true
   jossentials.reload:
     description: Reload Jossentials configuration.
+    default: op
+  jossentials.tp:
+    description: Teleport to another player.
+    default: op
+  jossentials.tp.others:
+    description: Teleport one player to another.
+    default: op
+  jossentials.tppos:
+    description: Teleport to coordinates.
+    default: op
+  jossentials.tppos.others:
+    description: Teleport another player to coordinates.
+    default: op
+  jossentials.near:
+    description: List nearby players.
+    default: op
+  jossentials.speed:
+    description: Change your walk or fly speed.
+    default: op
+  jossentials.seen:
+    description: Check when a player was last seen.
     default: op
 
 libraries:

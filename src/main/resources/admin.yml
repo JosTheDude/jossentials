@@ -1,0 +1,32 @@
+# admin command configuration
+admin:
+  commands:
+    tp:
+      # aliases are read when the plugin enables
+      aliases:
+        - tp
+        - teleport
+    tppos:
+      aliases:
+        - tppos
+        - teleportpos
+    near:
+      aliases:
+        - near
+    speed:
+      aliases:
+        - speed
+    seen:
+      aliases:
+        - seen
+        - lastseen
+
+  near:
+    # default radius for /near
+    default-radius: 40
+    # maximum allowed radius for /near
+    max-radius: 200
+
+  speed:
+    # maximum allowed speed value for /speed
+    max: 10

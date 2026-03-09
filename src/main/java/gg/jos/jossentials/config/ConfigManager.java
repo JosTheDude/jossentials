@@ -16,6 +16,7 @@ public final class ConfigManager {
     private FileConfiguration workbenches;
     private FileConfiguration spawn;
     private FileConfiguration warps;
+    private FileConfiguration admin;
     private FileConfiguration messages;
 
     public ConfigManager(JavaPlugin plugin) {
@@ -31,6 +32,7 @@ public final class ConfigManager {
         workbenches = loadConfig("workbenches.yml", "workbenches");
         spawn = loadConfig("spawn.yml", "spawn");
         warps = loadConfig("warps.yml", "warps");
+        admin = loadConfig("admin.yml", "admin");
         messages = loadConfig("messages.yml", "messages");
     }
 
@@ -43,6 +45,7 @@ public final class ConfigManager {
         workbenches = loadConfig("workbenches.yml", "workbenches");
         spawn = loadConfig("spawn.yml", "spawn");
         warps = loadConfig("warps.yml", "warps");
+        admin = loadConfig("admin.yml", "admin");
         messages = loadConfig("messages.yml", "messages");
     }
 
@@ -72,6 +75,10 @@ public final class ConfigManager {
 
     public FileConfiguration warps() {
         return warps;
+    }
+
+    public FileConfiguration admin() {
+        return admin;
     }
 
     public FileConfiguration messages() {

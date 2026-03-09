@@ -36,6 +36,8 @@ public final class Database {
         try (Connection connection = getConnection(); Statement statement = connection.createStatement()) {
             statement.executeUpdate(createHomesTableSql());
             statement.executeUpdate(createWarpsTableSql());
+            statement.executeUpdate(createSeenTableSql());
+            statement.executeUpdate(createSeenIndexSql());
         }
     }
 
@@ -159,5 +161,31 @@ public final class Database {
             + "pitch REAL NOT NULL,"
             + "PRIMARY KEY (name)"
             + ")";
+    }
+
+    private String createSeenTableSql() {
+        if (type == DatabaseType.MYSQL) {
+            return "CREATE TABLE IF NOT EXISTS jossentials_seen ("
+                + "player_uuid VARCHAR(36) NOT NULL,"
+                + "player_name VARCHAR(64) NOT NULL,"
+                + "player_name_lower VARCHAR(64) NOT NULL,"
+                + "last_login BIGINT NOT NULL,"
+                + "PRIMARY KEY (player_uuid)"
+                + ")";
+        }
+        return "CREATE TABLE IF NOT EXISTS jossentials_seen ("
+            + "player_uuid TEXT NOT NULL,"
+            + "player_name TEXT NOT NULL,"
+            + "player_name_lower TEXT NOT NULL,"
+            + "last_login INTEGER NOT NULL,"
+            + "PRIMARY KEY (player_uuid)"
+            + ")";
+    }
+
+    private String createSeenIndexSql() {
+        if (type == DatabaseType.MYSQL) {
+            return "CREATE INDEX IF NOT EXISTS jossentials_seen_name_lower_idx ON jossentials_seen (player_name_lower)";
+        }
+        return "CREATE INDEX IF NOT EXISTS jossentials_seen_name_lower_idx ON jossentials_seen (player_name_lower)";
     }
 }

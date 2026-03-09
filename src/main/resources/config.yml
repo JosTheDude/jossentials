@@ -9,6 +9,7 @@ config-files:
   - tpa.yml
   - warps.yml
   - workbenches.yml
+  - admin.yml
   - messages.yml
 
 # database storage configuration
@@ -61,4 +62,7 @@ features:
     enabled: true
   warps:
     # enable or disable the warps feature
+    enabled: true
+  admin:
+    # enable or disable admin utility commands
     enabled: true

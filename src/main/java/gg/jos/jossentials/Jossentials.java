@@ -1,6 +1,7 @@
 package gg.jos.jossentials;
 
 import co.aikar.commands.PaperCommandManager;
+import gg.jos.jossentials.admin.AdminFeature;
 import gg.jos.jossentials.db.Database;
 import gg.jos.jossentials.command.ReloadCommand;
 import gg.jos.jossentials.config.ConfigManager;
@@ -39,6 +40,7 @@ public final class Jossentials extends JavaPlugin {
         MessageDispatcher messageDispatcher = new MessageDispatcher(this);
         PaperCommandManager commandManager = new PaperCommandManager(this);
         featureManager = new FeatureManager();
+        featureManager.register(new AdminFeature(this, database, commandManager, messageDispatcher));
         featureManager.register(new HomesFeature(this, database, commandManager, messageDispatcher));
         featureManager.register(new SpawnFeature(this, commandManager, messageDispatcher));
         featureManager.register(new TPAFeature(this, commandManager, messageDispatcher));

@@ -19,6 +19,27 @@ messages:
       tpa-here-request-received: message
       tpa-request-cancelled-target: message
       tpa-request-received: message
+      admin-tp-self: message
+      admin-tp-other: message
+      admin-tp-received: message
+      admin-tppos-self: message
+      admin-tppos-other: message
+      admin-tppos-received: message
+      admin-near-list: message
+      admin-near-none: message
+      admin-near-radius-invalid: message
+      admin-speed-invalid-type: message
+      admin-speed-invalid-range: message
+      admin-speed-walk: message
+      admin-speed-fly: message
+      admin-speed-reset: message
+      admin-seen-online: message
+      admin-seen-offline: message
+      admin-seen-never: message
+      admin-seen-load-failed: message
+      admin-world-not-found: message
+      admin-invalid-coordinates: message
+      admin-teleport-failed: message
 
   sounds:
     # enable or disable all sounds
@@ -192,5 +213,26 @@ messages:
   warp-teleported: "<#a6e3a1>Teleported to <u>%warp%</u>."
   warp-teleport-cancelled: "<#f38ba8>Teleport cancelled."
   warp-other-sent: "<#a6e3a1>Sent <u>%player%</u> to <u>%warp%</u>."
+  admin-tp-self: "<#a6e3a1>Teleported to <u>%target%</u>."
+  admin-tp-other: "<#a6e3a1>Teleported <u>%player%</u> to <u>%target%</u>."
+  admin-tp-received: "<#a6e3a1>You were teleported to <u>%target%</u>."
+  admin-tppos-self: "<#a6e3a1>Teleported to <u>%x% %y% %z%</u> in <u>%world%</u>."
+  admin-tppos-other: "<#a6e3a1>Teleported <u>%player%</u> to <u>%x% %y% %z%</u> in <u>%world%</u>."
+  admin-tppos-received: "<#a6e3a1>You were teleported to <u>%x% %y% %z%</u> in <u>%world%</u>."
+  admin-near-list: "<#d3d3d3>Nearby players within <u>%radius%</u>: <#d3d3d3>%players%</#d3d3d3>."
+  admin-near-none: "<#f9e2af>No players found within <u>%radius%</u> blocks."
+  admin-near-radius-invalid: "<#f38ba8>Radius must be between <u>1</u> and <u>%max%</u>."
+  admin-speed-invalid-type: "<#f38ba8>Speed type must be <u>walk</u> or <u>fly</u>."
+  admin-speed-invalid-range: "<#f38ba8>Speed must be between <u>0</u> and <u>%max%</u>."
+  admin-speed-walk: "<#a6e3a1>Walk speed set to <u>%speed%</u>."
+  admin-speed-fly: "<#a6e3a1>Fly speed set to <u>%speed%</u>."
+  admin-speed-reset: "<#a6e3a1>%type% speed reset to normal."
+  admin-seen-online: "<#a6e3a1><u>%player%</u> is online right now."
+  admin-seen-offline: "<#d3d3d3><u>%player%</u> last joined <u>%elapsed%</u> ago (<u>%timestamp%</u>)."
+  admin-seen-never: "<#f9e2af>No seen data is available for <u>%player%</u>."
+  admin-seen-load-failed: "<#f38ba8>Could not load seen data right now."
+  admin-world-not-found: "<#f38ba8>World <u>%world%</u> was not found."
+  admin-invalid-coordinates: "<#f38ba8>Invalid coordinates. Use numbers or relative coordinates like <u>~ ~1 ~-5</u>."
+  admin-teleport-failed: "<#f38ba8>Teleport failed."
   reload: "<#a6e3a1>Jossentials reloaded."
   feature-disabled: "<#f38ba8><i>This feature is disabled.</i>"
