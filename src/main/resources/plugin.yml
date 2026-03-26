@@ -5,6 +5,7 @@ api-version: '1.21'
 authors: [ JosTheDude ]
 description:  A modular, configurable, and extremely intuitive all-in-one command core for awesome servers.
 website: https://jos.gg/
+folia-supported: true
 
 commands:
   homes:

@@ -30,12 +30,14 @@ public final class TPCommand extends BaseCommand {
             messageDispatcher.send(player, "messages.feature-disabled", "<red>This feature is disabled.");
             return;
         }
-        if (!TeleportUtil.teleportAndNormalizeDamageState(player, target.getPlayer().getLocation())) {
-            messageDispatcher.send(player, "messages.admin-teleport-failed", "<red>Teleport failed.");
-            return;
-        }
-        String message = feature.plugin().configs().messages().getString("messages.admin-tp-self", "<green>Teleported to <gold>%target%</gold>.");
-        messageDispatcher.sendWithKey(player, "messages.admin-tp-self", message.replace("%target%", target.getPlayer().getName()));
+        TeleportUtil.teleportAndNormalizeDamageState(player, target.getPlayer().getLocation()).thenAccept(success -> {
+            if (!success) {
+                messageDispatcher.send(player, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                return;
+            }
+            String message = feature.plugin().configs().messages().getString("messages.admin-tp-self", "<green>Teleported to <gold>%target%</gold>.");
+            messageDispatcher.sendWithKey(player, "messages.admin-tp-self", message.replace("%target%", target.getPlayer().getName()));
+        });
     }
 
     @Default
@@ -46,31 +48,33 @@ public final class TPCommand extends BaseCommand {
             messageDispatcher.send(sender, "messages.feature-disabled", "<red>This feature is disabled.");
             return;
         }
-        if (!TeleportUtil.teleportAndNormalizeDamageState(player.getPlayer(), target.getPlayer().getLocation())) {
-            messageDispatcher.send(sender, "messages.admin-teleport-failed", "<red>Teleport failed.");
-            return;
-        }
+        TeleportUtil.teleportAndNormalizeDamageState(player.getPlayer(), target.getPlayer().getLocation()).thenAccept(success -> {
+            if (!success) {
+                messageDispatcher.send(sender, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                return;
+            }
 
-        String senderMessage = feature.plugin().configs().messages().getString(
-            "messages.admin-tp-other",
-            "<green>Teleported <gold>%player%</gold> to <gold>%target%</gold>."
-        );
-        messageDispatcher.sendWithKey(
-            sender,
-            "messages.admin-tp-other",
-            senderMessage.replace("%player%", player.getPlayer().getName()).replace("%target%", target.getPlayer().getName())
-        );
-
-        if (player.getPlayer() != sender) {
-            String targetMessage = feature.plugin().configs().messages().getString(
-                "messages.admin-tp-received",
-                "<green>You were teleported to <gold>%target%</gold>."
+            String senderMessage = feature.plugin().configs().messages().getString(
+                    "messages.admin-tp-other",
+                    "<green>Teleported <gold>%player%</gold> to <gold>%target%</gold>."
             );
             messageDispatcher.sendWithKey(
-                player.getPlayer(),
-                "messages.admin-tp-received",
-                targetMessage.replace("%target%", target.getPlayer().getName())
+                    sender,
+                    "messages.admin-tp-other",
+                    senderMessage.replace("%player%", player.getPlayer().getName()).replace("%target%", target.getPlayer().getName())
             );
-        }
+
+            if (player.getPlayer() != sender) {
+                String targetMessage = feature.plugin().configs().messages().getString(
+                        "messages.admin-tp-received",
+                        "<green>You were teleported to <gold>%target%</gold>."
+                );
+                messageDispatcher.sendWithKey(
+                        player.getPlayer(),
+                        "messages.admin-tp-received",
+                        targetMessage.replace("%target%", target.getPlayer().getName())
+                );
+            }
+        });
     }
 }

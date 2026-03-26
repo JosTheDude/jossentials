@@ -44,16 +44,19 @@ public final class TPPosCommand extends BaseCommand {
         if (destination == null) {
             return;
         }
-        if (!TeleportUtil.teleportAndNormalizeDamageState(player, destination)) {
-            messageDispatcher.send(player, "messages.admin-teleport-failed", "<red>Teleport failed.");
-            return;
-        }
+        TeleportUtil.teleportAndNormalizeDamageState(player, destination).thenAccept(success -> {
+            if (!success) {
+                messageDispatcher.send(player, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                return;
+            }
 
-        String message = feature.plugin().configs().messages().getString(
-            "messages.admin-tppos-self",
-            "<green>Teleported to <gold>%x% %y% %z%</gold> in <gold>%world%</gold>."
-        );
-        messageDispatcher.sendWithKey(player, "messages.admin-tppos-self", format(message, destination));
+            String message = feature.plugin().configs().messages().getString(
+                    "messages.admin-tppos-self",
+                    "<green>Teleported to <gold>%x% %y% %z%</gold> in <gold>%world%</gold>."
+            );
+            messageDispatcher.sendWithKey(player, "messages.admin-tppos-self", format(message, destination));
+        });
+
     }
 
     @Default
@@ -74,32 +77,34 @@ public final class TPPosCommand extends BaseCommand {
         if (destination == null) {
             return;
         }
-        if (!TeleportUtil.teleportAndNormalizeDamageState(target.getPlayer(), destination)) {
-            messageDispatcher.send(sender, "messages.admin-teleport-failed", "<red>Teleport failed.");
-            return;
-        }
+        TeleportUtil.teleportAndNormalizeDamageState(target.getPlayer(), destination).thenAccept(success -> {
+            if (!success) {
+                messageDispatcher.send(sender, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                return;
+            }
 
-        String senderMessage = feature.plugin().configs().messages().getString(
-            "messages.admin-tppos-other",
-            "<green>Teleported <gold>%player%</gold> to <gold>%x% %y% %z%</gold> in <gold>%world%</gold>."
-        );
-        messageDispatcher.sendWithKey(
-            sender,
-            "messages.admin-tppos-other",
-            format(senderMessage, destination).replace("%player%", target.getPlayer().getName())
-        );
-
-        if (target.getPlayer() != sender) {
-            String targetMessage = feature.plugin().configs().messages().getString(
-                "messages.admin-tppos-received",
-                "<green>You were teleported to <gold>%x% %y% %z%</gold> in <gold>%world%</gold>."
+            String senderMessage = feature.plugin().configs().messages().getString(
+                    "messages.admin-tppos-other",
+                    "<green>Teleported <gold>%player%</gold> to <gold>%x% %y% %z%</gold> in <gold>%world%</gold>."
             );
             messageDispatcher.sendWithKey(
-                target.getPlayer(),
-                "messages.admin-tppos-received",
-                format(targetMessage, destination)
+                    sender,
+                    "messages.admin-tppos-other",
+                    format(senderMessage, destination).replace("%player%", target.getPlayer().getName())
             );
-        }
+
+            if (target.getPlayer() != sender) {
+                String targetMessage = feature.plugin().configs().messages().getString(
+                        "messages.admin-tppos-received",
+                        "<green>You were teleported to <gold>%x% %y% %z%</gold> in <gold>%world%</gold>."
+                );
+                messageDispatcher.sendWithKey(
+                        target.getPlayer(),
+                        "messages.admin-tppos-received",
+                        format(targetMessage, destination)
+                );
+            }
+        });
     }
 
     private World resolveWorld(CommandSender sender, String worldName) {

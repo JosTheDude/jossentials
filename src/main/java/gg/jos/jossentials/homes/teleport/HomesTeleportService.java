@@ -42,10 +42,14 @@ public final class HomesTeleportService implements Listener {
         HomesSettings current = settings;
         if (!current.warmupEnabled() || player.hasPermission(current.bypassPermission())) {
             scheduler.runEntity(player, () -> {
-                if (TeleportUtil.teleportAndNormalizeDamageState(player, destination)) {
-                    String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
-                    messageDispatcher.sendWithKey(player, "messages.home-teleported", message.replace("%slot%", String.valueOf(slot)));
-                }
+                TeleportUtil.teleportAndNormalizeDamageState(player, destination).thenAccept(success -> {
+                    if (success) {
+                        String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
+                        messageDispatcher.sendWithKey(player, "messages.home-teleported", message.replace("%slot%", String.valueOf(slot)));
+                    } else {
+                        messageDispatcher.send(player, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                    }
+                });
             });
             return;
         }
@@ -76,10 +80,14 @@ public final class HomesTeleportService implements Listener {
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                if (TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination())) {
-                    String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
-                    messageDispatcher.sendWithKey(currentPlayer, "messages.home-teleported", message.replace("%slot%", String.valueOf(pending.payload())));
-                }
+                TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination()).thenAccept(success -> {
+                    if (success) {
+                        String message = plugin.configs().messages().getString("messages.home-teleported", "<green>Teleported to home <gold>%slot%</gold>.");
+                        messageDispatcher.sendWithKey(currentPlayer, "messages.home-teleported", message.replace("%slot%", String.valueOf(pending.payload())));
+                    } else {
+                        messageDispatcher.send(currentPlayer, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                    }
+                });
             }
         );
     }

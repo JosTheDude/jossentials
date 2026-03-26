@@ -43,10 +43,14 @@ public final class TPATeleportService implements Listener {
         Location destination = target.getLocation();
         if (!current.warmupEnabled() || requester.hasPermission(current.bypassPermission())) {
             scheduler.runEntity(requester, () -> {
-                if (TeleportUtil.teleportAndNormalizeDamageState(requester, destination)) {
-                    String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
-                    messageDispatcher.sendWithKey(requester, "messages.tpa-teleported", message.replace("%target%", target.getName()));
-                }
+                TeleportUtil.teleportAndNormalizeDamageState(requester, destination).thenAccept(success -> {
+                    if (success) {
+                        String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
+                        messageDispatcher.sendWithKey(requester, "messages.tpa-teleported", message.replace("%target%", target.getName()));
+                    } else {
+                        messageDispatcher.send(requester, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                    }
+                });
             });
             return;
         }
@@ -77,10 +81,14 @@ public final class TPATeleportService implements Listener {
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                if (TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination())) {
-                    String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
-                    messageDispatcher.sendWithKey(currentPlayer, "messages.tpa-teleported", message.replace("%target%", String.valueOf(pending.payload())));
-                }
+                TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination()).thenAccept(success -> {
+                    if (success) {
+                        String message = plugin.configs().messages().getString("messages.tpa-teleported", "<green>Teleported to <gold>%target%</gold>.");
+                        messageDispatcher.sendWithKey(currentPlayer, "messages.tpa-teleported", message.replace("%target%", String.valueOf(pending.payload())));
+                    } else {
+                        messageDispatcher.send(currentPlayer, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                    }
+                });
             }
         );
     }

@@ -40,10 +40,14 @@ public final class SpawnTeleportService implements Listener {
         SpawnSettings current = settings;
         if (skipWarmup || !current.warmupEnabled() || player.hasPermission(current.bypassPermission())) {
             plugin.scheduler().runEntity(player, () -> {
-                if (TeleportUtil.teleportAndNormalizeDamageState(player, destination)) {
-                    String message = plugin.configs().messages().getString("messages.spawn-teleported", "<green>Teleported to spawn.");
-                    messageDispatcher.sendWithKey(player, "messages.spawn-teleported", message);
-                }
+                TeleportUtil.teleportAndNormalizeDamageState(player, destination).thenAccept(success -> {
+                    if (success) {
+                        String message = plugin.configs().messages().getString("messages.spawn-teleported", "<green>Teleported to spawn.");
+                        messageDispatcher.sendWithKey(player, "messages.spawn-teleported", message);
+                    } else {
+                        messageDispatcher.send(player, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                    }
+                });
             });
             return;
         }
@@ -68,10 +72,14 @@ public final class SpawnTeleportService implements Listener {
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                if (TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination())) {
-                    String message = plugin.configs().messages().getString("messages.spawn-teleported", "<green>Teleported to spawn.");
-                    messageDispatcher.sendWithKey(currentPlayer, "messages.spawn-teleported", message);
-                }
+                TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination()).thenAccept(success -> {
+                    if (success) {
+                        String message = plugin.configs().messages().getString("messages.spawn-teleported", "<green>Teleported to spawn.");
+                        messageDispatcher.sendWithKey(currentPlayer, "messages.spawn-teleported", message);
+                    } else {
+                        messageDispatcher.send(player, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                    }
+                });
             }
         );
     }
