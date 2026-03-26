@@ -13,8 +13,8 @@ public final class TeleportUtil {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         player.teleportAsync(destination).thenAccept(success -> {
             if (success) {
-                player.setInvulnerable(true);
-                player.setNoDamageTicks(Integer.MAX_VALUE);
+                player.setInvulnerable(false);
+                player.setNoDamageTicks(0);
             }
             future.complete(success);
         });
