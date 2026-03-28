@@ -5,12 +5,3 @@ fly:
       aliases:
         - fly
         - jfly
-
-  claimfly:
-    enabled: true
-    permission: jossentials.fly.claim
-    bypass-permission: jossentials.fly.claim.bypass
-    safe-ground:
-      enabled: true
-      search-radius: 4
-      fall-damage-immunity-ticks: 60

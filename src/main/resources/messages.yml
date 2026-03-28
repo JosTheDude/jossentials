@@ -37,9 +37,6 @@ messages:
       fly-disabled-other: message
       fly-enabled-received: message
       fly-disabled-received: message
-      claimfly-enabled: message
-      claimfly-disabled: message
-      claimfly-grounded: message
       admin-speed-invalid-type: message
       admin-speed-invalid-range: message
       admin-speed-walk: message
@@ -243,9 +240,6 @@ messages:
   fly-disabled-other: "<#f38ba8>Disabled flight for <u>%player%</u>."
   fly-enabled-received: "<#a6e3a1>Your flight was enabled."
   fly-disabled-received: "<#f38ba8>Your flight was disabled."
-  claimfly-enabled: "<#a6e3a1>Claim fly enabled."
-  claimfly-disabled: "<#f38ba8>Claim fly disabled."
-  claimfly-grounded: "<#f9e2af>You left claim fly range and were brought safely to the ground."
   admin-speed-invalid-type: "<#f38ba8>Speed type must be <u>walk</u> or <u>fly</u>."
   admin-speed-invalid-range: "<#f38ba8>Speed must be between <u>0</u> and <u>%max%</u>."
   admin-speed-walk: "<#a6e3a1>Walk speed set to <u>%speed%</u>."

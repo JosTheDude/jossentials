@@ -21,18 +21,4 @@ public final class TeleportUtil {
 
         return future;
     }
-
-    public static CompletableFuture<Boolean> teleportAndProtect(Player player, Location destination, int noDamageTicks) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        player.teleportAsync(destination).thenAccept(success -> {
-            if (success) {
-                player.setInvulnerable(false);
-                player.setFallDistance(0.0F);
-                player.setNoDamageTicks(Math.max(0, noDamageTicks));
-            }
-            future.complete(success);
-        });
-
-        return future;
-    }
 }

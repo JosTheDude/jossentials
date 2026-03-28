@@ -5,7 +5,6 @@ api-version: '1.21'
 authors: [ JosTheDude ]
 description:  A modular, configurable, and extremely intuitive all-in-one command core for awesome servers.
 website: https://jos.gg/
-softdepend: [ Lands ]
 folia-supported: true
 
 commands:
@@ -195,12 +194,6 @@ permissions:
     default: op
   jossentials.fly.others:
     description: Toggle another player's flight state.
-    default: op
-  jossentials.fly.claim:
-    description: Automatically receive flight in claims where the Lands fly flag allows it.
-    default: false
-  jossentials.fly.claim.bypass:
-    description: Bypass automatic claim fly restrictions.
     default: op
   jossentials.speed:
     description: Change your walk or fly speed.

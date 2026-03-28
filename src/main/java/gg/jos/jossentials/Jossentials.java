@@ -14,8 +14,6 @@ import gg.jos.jossentials.util.MessageDispatcher;
 import gg.jos.jossentials.util.SchedulerAdapter;
 import gg.jos.jossentials.warps.feature.WarpsFeature;
 import gg.jos.jossentials.workbenches.WorkbenchesFeature;
-import me.angeschossen.lands.api.LandsIntegration;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Jossentials extends JavaPlugin {
@@ -23,7 +21,6 @@ public final class Jossentials extends JavaPlugin {
     private SchedulerAdapter scheduler;
     private Database database;
     private FeatureManager featureManager;
-    private LandsIntegration landsIntegration;
 
     @Override
     public void onEnable() {
@@ -36,17 +33,6 @@ public final class Jossentials extends JavaPlugin {
             database.initialize();
         } catch (Exception ex) {
             getLogger().severe("Failed to initialize database: " + ex.getMessage());
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        try {
-            if (Bukkit.getPluginManager().getPlugin("Lands") != null) {
-                landsIntegration = LandsIntegration.of(this);
-            }
-        } catch (Exception ex) {
-            getLogger().severe("Failed to initialize Lands integration when Lands is present: " + ex.getMessage());
-            Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
@@ -83,7 +69,4 @@ public final class Jossentials extends JavaPlugin {
         return scheduler;
     }
 
-    public LandsIntegration landsIntegration() {
-        return landsIntegration;
-    }
 }

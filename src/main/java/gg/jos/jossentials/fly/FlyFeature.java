@@ -8,9 +8,6 @@ import gg.jos.jossentials.util.MessageDispatcher;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-
-import java.util.List;
 
 public final class FlyFeature implements Feature {
     private final Jossentials plugin;
@@ -18,7 +15,6 @@ public final class FlyFeature implements Feature {
     private final MessageDispatcher messageDispatcher;
 
     private FlySettings settings;
-    private ClaimFlyListener claimFlyListener;
     private boolean enabled;
     private boolean commandsRegistered;
 
@@ -55,8 +51,6 @@ public final class FlyFeature implements Feature {
             commandManager.registerCommand(new FlyCommand(this, messageDispatcher));
             commandsRegistered = true;
         }
-
-        refreshClaimFlyListener();
         enabled = true;
     }
 
@@ -65,12 +59,6 @@ public final class FlyFeature implements Feature {
         if (!enabled) {
             return;
         }
-
-        if (claimFlyListener != null) {
-            claimFlyListener.shutdown();
-            HandlerList.unregisterAll(claimFlyListener);
-            claimFlyListener = null;
-        }
         enabled = false;
     }
 
@@ -78,7 +66,6 @@ public final class FlyFeature implements Feature {
     public void reload() {
         settings = FlySettings.fromConfig(plugin.configs().fly());
         applyReplacements();
-        refreshClaimFlyListener();
     }
 
     public Jossentials plugin() {
@@ -124,26 +111,5 @@ public final class FlyFeature implements Feature {
             return;
         }
         commandManager.getCommandReplacements().addReplacement("fly-aliases", settings.aliasesReplacement());
-    }
-
-    private void refreshClaimFlyListener() {
-        if (claimFlyListener != null) {
-            claimFlyListener.shutdown();
-            HandlerList.unregisterAll(claimFlyListener);
-            claimFlyListener = null;
-        }
-
-        if (settings == null || !settings.claimFlyEnabled()) {
-            return;
-        }
-
-        if (plugin.landsIntegration() == null) {
-            plugin.getLogger().warning("Claim fly is enabled but Lands is not present. Claim fly will stay inactive.");
-            return;
-        }
-
-        claimFlyListener = new ClaimFlyListener(this, messageDispatcher);
-        plugin.getServer().getPluginManager().registerEvents(claimFlyListener, plugin);
-        claimFlyListener.recheckOnlinePlayers();
     }
 }
