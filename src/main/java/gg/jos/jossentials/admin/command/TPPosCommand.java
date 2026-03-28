@@ -6,11 +6,13 @@ import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Optional;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import gg.jos.jossentials.admin.AdminFeature;
 import gg.jos.jossentials.admin.CoordinateResolver;
 import gg.jos.jossentials.util.MessageDispatcher;
 import gg.jos.jossentials.util.TeleportUtil;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,97 +30,103 @@ public final class TPPosCommand extends BaseCommand {
 
     @Default
     @CommandPermission("jossentials.tppos")
-    @CommandCompletion("@admintpposcoords @admintpposcoords @admintpposcoords @players")
-    public void onTeleport(CommandSender sender, String x, String y, String z, @Optional String targetName) {
+    public void onTeleport(Player player, String x, String y, String z, @Optional String worldName) {
+        if (!feature.isEnabled()) {
+            messageDispatcher.send(player, "messages.feature-disabled", "<red>This feature is disabled.");
+            return;
+        }
+        World world = resolveWorld(player, worldName);
+        if (worldName != null && world == null) {
+            return;
+        }
+
+        Location destination = resolveDestination(player, player.getLocation(), world, x, y, z);
+        if (destination == null) {
+            return;
+        }
+        TeleportUtil.teleportAndNormalizeDamageState(player, destination).thenAccept(success -> {
+            if (!success) {
+                messageDispatcher.send(player, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                return;
+            }
+
+            String message = feature.plugin().configs().messages().getString(
+                    "messages.admin-tppos-self",
+                    "<green>Teleported to <gold>%x% %y% %z%</gold> in <gold>%world%</gold>."
+            );
+            messageDispatcher.sendWithKey(player, "messages.admin-tppos-self", format(message, destination));
+        });
+
+    }
+
+    @Default
+    @CommandPermission("jossentials.tppos.others")
+    @CommandCompletion("@players")
+    public void onTeleport(CommandSender sender, OnlinePlayer target, String x, String y, String z, @Optional String worldName) {
         if (!feature.isEnabled()) {
             messageDispatcher.send(sender, "messages.feature-disabled", "<red>This feature is disabled.");
             return;
         }
 
-        Player destinationPlayer = resolveTarget(sender, targetName);
-        if (destinationPlayer == null) {
+        World world = resolveWorld(sender, worldName);
+        if (worldName != null && world == null) {
             return;
         }
 
-        Location destination = resolveDestination(sender, destinationPlayer.getLocation(), x, y, z);
+        Location destination = resolveDestination(sender, target.getPlayer().getLocation(), world, x, y, z);
         if (destination == null) {
             return;
         }
-        if (!TeleportUtil.teleportAndNormalizeDamageState(destinationPlayer, destination)) {
-            messageDispatcher.send(sender, "messages.admin-teleport-failed", "<red>Teleport failed.");
-            return;
-        }
+        TeleportUtil.teleportAndNormalizeDamageState(target.getPlayer(), destination).thenAccept(success -> {
+            if (!success) {
+                messageDispatcher.send(sender, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                return;
+            }
 
-        if (targetName == null) {
-            String message = feature.plugin().configs().messages().getString(
-                "messages.admin-tppos-self",
-                "<green>Teleported to <gold>%x% %y% %z%</gold>."
-            );
-            messageDispatcher.sendWithKey(sender, "messages.admin-tppos-self", format(message, destination));
-            return;
-        }
-
-        String senderMessage = feature.plugin().configs().messages().getString(
-            "messages.admin-tppos-other",
-            "<green>Teleported <gold>%player%</gold> to <gold>%x% %y% %z%</gold>."
-        );
-        messageDispatcher.sendWithKey(
-            sender,
-            "messages.admin-tppos-other",
-            format(senderMessage, destination).replace("%player%", destinationPlayer.getName())
-        );
-
-        if (sender != destinationPlayer) {
-            String targetMessage = feature.plugin().configs().messages().getString(
-                "messages.admin-tppos-received",
-                "<green>You were teleported to <gold>%x% %y% %z%</gold>."
+            String senderMessage = feature.plugin().configs().messages().getString(
+                    "messages.admin-tppos-other",
+                    "<green>Teleported <gold>%player%</gold> to <gold>%x% %y% %z%</gold> in <gold>%world%</gold>."
             );
             messageDispatcher.sendWithKey(
-                destinationPlayer,
-                "messages.admin-tppos-received",
-                format(targetMessage, destination)
+                    sender,
+                    "messages.admin-tppos-other",
+                    format(senderMessage, destination).replace("%player%", target.getPlayer().getName())
             );
-        }
+
+            if (target.getPlayer() != sender) {
+                String targetMessage = feature.plugin().configs().messages().getString(
+                        "messages.admin-tppos-received",
+                        "<green>You were teleported to <gold>%x% %y% %z%</gold> in <gold>%world%</gold>."
+                );
+                messageDispatcher.sendWithKey(
+                        target.getPlayer(),
+                        "messages.admin-tppos-received",
+                        format(targetMessage, destination)
+                );
+            }
+        });
     }
 
-    private Player resolveTarget(CommandSender sender, String targetName) {
-        if (targetName == null) {
-            if (sender instanceof Player player) {
-                return player;
-            }
-            String message = feature.plugin().configs().messages().getString(
-                "messages.admin-tppos-player-required",
-                "<red>Console must specify a player for /tppos."
-            );
-            messageDispatcher.sendWithKey(sender, "messages.admin-tppos-player-required", message);
+    private World resolveWorld(CommandSender sender, String worldName) {
+        if (worldName == null || worldName.isBlank()) {
             return null;
         }
-
-        if (!sender.hasPermission("jossentials.tppos.others")) {
-            messageDispatcher.send(sender, "messages.no-permission", "<red>You do not have permission.");
-            return null;
+        World world = feature.plugin().getServer().getWorld(worldName);
+        if (world != null) {
+            return world;
         }
-
-        Player target = feature.findOnlinePlayer(targetName);
-        if (target != null) {
-            return target;
-        }
-
-        String message = feature.plugin().configs().messages().getString(
-            "messages.player-not-found",
-            "<red>Player <gold>%player%</gold> was not found."
-        );
-        messageDispatcher.sendWithKey(sender, "messages.player-not-found", message.replace("%player%", targetName));
+        String message = feature.plugin().configs().messages().getString("messages.admin-world-not-found", "<red>World <gold>%world%</gold> was not found.");
+        messageDispatcher.sendWithKey(sender, "messages.admin-world-not-found", message.replace("%world%", worldName));
         return null;
     }
 
-    private Location resolveDestination(CommandSender sender, Location base, String x, String y, String z) {
+    private Location resolveDestination(CommandSender sender, Location base, World world, String x, String y, String z) {
         try {
-            return CoordinateResolver.resolve(base, null, x, y, z);
+            return CoordinateResolver.resolve(base, world, x, y, z);
         } catch (IllegalArgumentException ex) {
             String message = feature.plugin().configs().messages().getString(
-                "messages.admin-invalid-coordinates",
-                "<red>Invalid coordinates. Use numbers or relative coordinates like <gold>~ ~1 ~-5</gold>."
+                    "messages.admin-invalid-coordinates",
+                    "<red>Invalid coordinates. Use numbers or relative coordinates like <gold>~ ~1 ~-5</gold>."
             );
             messageDispatcher.sendWithKey(sender, "messages.admin-invalid-coordinates", message);
             return null;
@@ -127,9 +135,10 @@ public final class TPPosCommand extends BaseCommand {
 
     private String format(String template, Location destination) {
         return template
-            .replace("%x%", formatCoord(destination.getX()))
-            .replace("%y%", formatCoord(destination.getY()))
-            .replace("%z%", formatCoord(destination.getZ()));
+                .replace("%x%", formatCoord(destination.getX()))
+                .replace("%y%", formatCoord(destination.getY()))
+                .replace("%z%", formatCoord(destination.getZ()))
+                .replace("%world%", destination.getWorld() != null ? destination.getWorld().getName() : "unknown");
     }
 
     private String formatCoord(double value) {

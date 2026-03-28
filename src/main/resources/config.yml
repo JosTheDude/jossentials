@@ -10,6 +10,7 @@ config-files:
   - warps.yml
   - workbenches.yml
   - admin.yml
+  - fly.yml
   - messages.yml
 
 # database storage configuration
@@ -65,4 +66,7 @@ features:
     enabled: true
   admin:
     # enable or disable admin utility commands
+    enabled: true
+  fly:
+    # enable or disable the fly feature
     enabled: true

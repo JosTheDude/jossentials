@@ -1,4 +1,4 @@
-package gg.jos.jossentials.admin.command;
+package gg.jos.jossentials.fly.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -6,17 +6,17 @@ import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Optional;
-import gg.jos.jossentials.admin.AdminFeature;
+import gg.jos.jossentials.fly.FlyFeature;
 import gg.jos.jossentials.util.MessageDispatcher;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandAlias("%{admin-fly-aliases}")
+@CommandAlias("%{fly-aliases}")
 public final class FlyCommand extends BaseCommand {
-    private final AdminFeature feature;
+    private final FlyFeature feature;
     private final MessageDispatcher messageDispatcher;
 
-    public FlyCommand(AdminFeature feature, MessageDispatcher messageDispatcher) {
+    public FlyCommand(FlyFeature feature, MessageDispatcher messageDispatcher) {
         this.feature = feature;
         this.messageDispatcher = messageDispatcher;
     }
@@ -36,17 +36,16 @@ public final class FlyCommand extends BaseCommand {
         }
 
         boolean enabled = !target.getAllowFlight();
-        target.setAllowFlight(enabled);
-        target.setFlying(enabled);
+        feature.setManualFlight(target, enabled);
 
         if (targetName == null) {
-            String messageKey = enabled ? "messages.admin-fly-enabled-self" : "messages.admin-fly-disabled-self";
+            String messageKey = enabled ? "messages.fly-enabled-self" : "messages.fly-disabled-self";
             String fallback = enabled ? "<green>Flight enabled." : "<red>Flight disabled.";
             messageDispatcher.send(sender, messageKey, fallback);
             return;
         }
 
-        String senderMessageKey = enabled ? "messages.admin-fly-enabled-other" : "messages.admin-fly-disabled-other";
+        String senderMessageKey = enabled ? "messages.fly-enabled-other" : "messages.fly-disabled-other";
         String senderFallback = enabled
             ? "<green>Enabled flight for <gold>%player%</gold>."
             : "<red>Disabled flight for <gold>%player%</gold>.";
@@ -57,7 +56,7 @@ public final class FlyCommand extends BaseCommand {
         );
 
         if (sender != target) {
-            String targetMessageKey = enabled ? "messages.admin-fly-enabled-received" : "messages.admin-fly-disabled-received";
+            String targetMessageKey = enabled ? "messages.fly-enabled-received" : "messages.fly-disabled-received";
             String targetFallback = enabled ? "<green>Your flight was enabled." : "<red>Your flight was disabled.";
             messageDispatcher.send(target, targetMessageKey, targetFallback);
         }
@@ -69,10 +68,10 @@ public final class FlyCommand extends BaseCommand {
                 return player;
             }
             String message = feature.plugin().configs().messages().getString(
-                "messages.admin-fly-player-required",
+                "messages.fly-player-required",
                 "<red>Console must specify a player for /fly."
             );
-            messageDispatcher.sendWithKey(sender, "messages.admin-fly-player-required", message);
+            messageDispatcher.sendWithKey(sender, "messages.fly-player-required", message);
             return null;
         }
 

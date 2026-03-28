@@ -13,9 +13,6 @@ admin:
     near:
       aliases:
         - near
-    fly:
-      aliases:
-        - fly
     speed:
       aliases:
         - speed

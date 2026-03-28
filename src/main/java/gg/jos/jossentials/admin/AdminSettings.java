@@ -12,7 +12,6 @@ public final class AdminSettings {
     private final List<String> tpAliases;
     private final List<String> tpPosAliases;
     private final List<String> nearAliases;
-    private final List<String> flyAliases;
     private final List<String> speedAliases;
     private final List<String> seenAliases;
     private final int defaultNearRadius;
@@ -23,7 +22,6 @@ public final class AdminSettings {
         List<String> tpAliases,
         List<String> tpPosAliases,
         List<String> nearAliases,
-        List<String> flyAliases,
         List<String> speedAliases,
         List<String> seenAliases,
         int defaultNearRadius,
@@ -33,7 +31,6 @@ public final class AdminSettings {
         this.tpAliases = tpAliases;
         this.tpPosAliases = tpPosAliases;
         this.nearAliases = nearAliases;
-        this.flyAliases = flyAliases;
         this.speedAliases = speedAliases;
         this.seenAliases = seenAliases;
         this.defaultNearRadius = defaultNearRadius;
@@ -50,7 +47,6 @@ public final class AdminSettings {
             aliases(config, "admin.commands.tp.aliases", List.of("tp", "teleport")),
             aliases(config, "admin.commands.tppos.aliases", List.of("tppos", "teleportpos")),
             aliases(config, "admin.commands.near.aliases", List.of("near")),
-            aliases(config, "admin.commands.fly.aliases", List.of("fly")),
             aliases(config, "admin.commands.speed.aliases", List.of("speed")),
             aliases(config, "admin.commands.seen.aliases", List.of("seen", "lastseen")),
             defaultNearRadius,
@@ -69,10 +65,6 @@ public final class AdminSettings {
 
     public List<String> nearAliases() {
         return nearAliases;
-    }
-
-    public List<String> flyAliases() {
-        return flyAliases;
     }
 
     public List<String> speedAliases() {
@@ -105,10 +97,6 @@ public final class AdminSettings {
 
     public String nearAliasesReplacement() {
         return String.join("|", nearAliases);
-    }
-
-    public String flyAliasesReplacement() {
-        return String.join("|", flyAliases);
     }
 
     public String speedAliasesReplacement() {
