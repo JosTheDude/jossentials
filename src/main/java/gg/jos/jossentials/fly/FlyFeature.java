@@ -6,7 +6,6 @@ import gg.jos.jossentials.feature.Feature;
 import gg.jos.jossentials.fly.command.FlyCommand;
 import gg.jos.jossentials.util.MessageDispatcher;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 public final class FlyFeature implements Feature {
@@ -88,17 +87,11 @@ public final class FlyFeature implements Feature {
         return null;
     }
 
-    public boolean canNaturallyFly(Player player) {
-        GameMode gameMode = player.getGameMode();
-        return gameMode == GameMode.CREATIVE || gameMode == GameMode.SPECTATOR;
+    public boolean isFlightEnabled(Player player) {
+        return player.getAllowFlight() || player.isFlying();
     }
 
     public void setManualFlight(Player player, boolean enabled) {
-        if (canNaturallyFly(player)) {
-            player.setFlying(enabled);
-            return;
-        }
-
         player.setAllowFlight(enabled);
         player.setFlying(enabled);
         if (!enabled) {

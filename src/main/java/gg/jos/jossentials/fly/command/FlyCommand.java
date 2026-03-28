@@ -35,7 +35,7 @@ public final class FlyCommand extends BaseCommand {
             return;
         }
 
-        boolean enabled = !target.getAllowFlight();
+        boolean enabled = !feature.isFlightEnabled(target);
         feature.setManualFlight(target, enabled);
 
         if (targetName == null) {
