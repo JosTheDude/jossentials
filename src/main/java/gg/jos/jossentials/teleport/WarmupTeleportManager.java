@@ -43,23 +43,29 @@ public final class WarmupTeleportManager {
             onWarmupStart.accept(request);
         }
 
-        SchedulerAdapter.TaskHandle countdownTask = scheduler.runEntityTimer(player, () -> {
+        SchedulerAdapter.TaskHandle countdownTask = scheduler.runGlobalTimer(() -> {
             PendingTeleport pendingTeleport = pending.get(player.getUniqueId());
             if (pendingTeleport == null) {
                 return;
             }
-            if (pendingTeleport.remainingSeconds <= 0) {
+
+            long now = System.currentTimeMillis();
+            long remaining = pendingTeleport.endTime - now;
+
+            if (remaining <= 0) {
                 if (pendingTeleport.countdownTask != null) {
                     pendingTeleport.countdownTask.cancel();
                 }
                 return;
             }
-            if (onWarmupTick != null) {
-                onWarmupTick.accept(pendingTeleport, pendingTeleport.remainingSeconds);
-            }
-            pendingTeleport.remainingSeconds -= 1;
-            if (pendingTeleport.remainingSeconds <= 0 && pendingTeleport.countdownTask != null) {
-                pendingTeleport.countdownTask.cancel();
+
+            int remainingSeconds = (int) Math.max(0, Math.ceil(remaining / 1000.0));
+
+            if (remainingSeconds != pendingTeleport.remainingSeconds) {
+                pendingTeleport.remainingSeconds = remainingSeconds;
+                if (onWarmupTick != null) {
+                    onWarmupTick.accept(pendingTeleport, pendingTeleport.remainingSeconds);
+                }
             }
         }, 0L, 20L);
 
@@ -167,6 +173,7 @@ public final class WarmupTeleportManager {
         private final Location startLocation;
         private final Object payload;
         private int remainingSeconds;
+        private long endTime;
         private SchedulerAdapter.TaskHandle task;
         private SchedulerAdapter.TaskHandle countdownTask;
 
@@ -176,7 +183,8 @@ public final class WarmupTeleportManager {
             this.destination = destination;
             this.startLocation = startLocation;
             this.payload = payload;
-            this.remainingSeconds = remainingSeconds;
+            this.remainingSeconds = -1;
+            this.endTime = System.currentTimeMillis() + (remainingSeconds * 1000L);
         }
 
         public UUID playerId() {

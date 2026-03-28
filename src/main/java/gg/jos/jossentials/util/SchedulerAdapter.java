@@ -2,6 +2,8 @@ package gg.jos.jossentials.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -13,8 +15,7 @@ public final class SchedulerAdapter {
         void cancel();
     }
 
-    private static final TaskHandle NOOP = () -> {
-    };
+    private static final TaskHandle NOOP = () -> {};
 
     private final JavaPlugin plugin;
     private final boolean folia;
@@ -39,11 +40,13 @@ public final class SchedulerAdapter {
         try {
             Method getGlobalScheduler = Bukkit.class.getMethod("getGlobalRegionScheduler");
             global = getGlobalScheduler.invoke(null);
-            globalRunMethod = global.getClass().getMethod("run", JavaPlugin.class, Consumer.class);
-            globalRunDelayedMethod = global.getClass().getMethod("runDelayed", JavaPlugin.class, Consumer.class, long.class);
-            globalRunAtFixedRateMethod = global.getClass().getMethod("runAtFixedRate", JavaPlugin.class, Consumer.class, long.class, long.class);
+            globalRunMethod = global.getClass().getMethod("run", Plugin.class, Consumer.class);
+            globalRunDelayedMethod = global.getClass().getMethod("runDelayed", Plugin.class, Consumer.class, long.class);
+            globalRunAtFixedRateMethod = global.getClass().getMethod("runAtFixedRate", Plugin.class, Consumer.class, long.class, long.class);
             globalDetected = true;
         } catch (Exception ignored) {
+            System.out.println("Folia global scheduler not detected, falling back to Bukkit scheduler.");
+            ignored.printStackTrace();
         }
 
         try {
@@ -75,6 +78,7 @@ public final class SchedulerAdapter {
 
     public TaskHandle runGlobalLater(Runnable task, long delayTicks) {
         if (folia && globalScheduler != null && globalRunDelayed != null) {
+            if (delayTicks == 0L) delayTicks = 1L;
             return wrapFolia(runFolia(globalScheduler, globalRunDelayed, task, delayTicks));
         }
         return wrapBukkit(Bukkit.getScheduler().runTaskLater(plugin, task, delayTicks));
@@ -82,6 +86,7 @@ public final class SchedulerAdapter {
 
     public TaskHandle runGlobalTimer(Runnable task, long delayTicks, long periodTicks) {
         if (folia && globalScheduler != null && globalRunAtFixedRate != null) {
+            if (delayTicks == 0L) delayTicks = 1L;
             return wrapFolia(runFolia(globalScheduler, globalRunAtFixedRate, task, delayTicks, periodTicks));
         }
         return wrapBukkit(Bukkit.getScheduler().runTaskTimer(plugin, task, delayTicks, periodTicks));
@@ -91,9 +96,9 @@ public final class SchedulerAdapter {
         if (folia && player != null) {
             Object scheduler = entityScheduler(player);
             if (scheduler != null) {
-                Method runMethod = resolveEntityMethod(scheduler, "run", JavaPlugin.class, Consumer.class);
+                Method runMethod = resolveEntityMethod(scheduler, "run", Plugin.class, Consumer.class, Runnable.class);
                 if (runMethod != null) {
-                    return wrapFolia(runFolia(scheduler, runMethod, task));
+                    return wrapFolia(runFolia(scheduler, runMethod, task, (Object) null));
                 }
             }
         }
@@ -108,9 +113,10 @@ public final class SchedulerAdapter {
         if (folia && player != null) {
             Object scheduler = entityScheduler(player);
             if (scheduler != null) {
-                Method runMethod = resolveEntityMethod(scheduler, "runDelayed", JavaPlugin.class, Consumer.class, long.class);
+                Method runMethod = resolveEntityMethod(scheduler, "runDelayed", Plugin.class, Consumer.class, Runnable.class, long.class);
                 if (runMethod != null) {
-                    return wrapFolia(runFolia(scheduler, runMethod, task, delayTicks));
+                    if (delayTicks == 0L) delayTicks = 1L;
+                    return wrapFolia(runFolia(scheduler, runMethod, task, null, delayTicks));
                 }
             }
         }
@@ -121,9 +127,10 @@ public final class SchedulerAdapter {
         if (folia && player != null) {
             Object scheduler = entityScheduler(player);
             if (scheduler != null) {
-                Method runMethod = resolveEntityMethod(scheduler, "runAtFixedRate", JavaPlugin.class, Consumer.class, long.class, long.class);
+                Method runMethod = resolveEntityMethod(scheduler, "runAtFixedRate", Plugin.class, Consumer.class, Runnable.class, long.class, long.class);
                 if (runMethod != null) {
-                    return wrapFolia(runFolia(scheduler, runMethod, task, delayTicks, periodTicks));
+                    if (delayTicks == 0L) delayTicks = 1L;
+                    return wrapFolia(runFolia(scheduler, runMethod, task, null, delayTicks, periodTicks));
                 }
             }
         }
@@ -162,6 +169,7 @@ public final class SchedulerAdapter {
             return method.invoke(scheduler, params);
         } catch (Exception ex) {
             plugin.getLogger().warning("failed to schedule folia task, falling back to bukkit scheduler.");
+            ex.printStackTrace();
             if (args.length == 0) {
                 return runBukkit(task);
             }
@@ -191,6 +199,7 @@ public final class SchedulerAdapter {
         try {
             return scheduler.getClass().getMethod(name, types);
         } catch (Exception ignored) {
+            ignored.printStackTrace();
             return null;
         }
     }

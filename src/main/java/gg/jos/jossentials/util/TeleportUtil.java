@@ -3,17 +3,22 @@ package gg.jos.jossentials.util;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.CompletableFuture;
+
 public final class TeleportUtil {
     private TeleportUtil() {
     }
 
-    public static boolean teleportAndNormalizeDamageState(Player player, Location destination) {
-        boolean teleported = player.teleport(destination);
-        if (!teleported) {
-            return false;
-        }
-        player.setInvulnerable(false);
-        player.setNoDamageTicks(0);
-        return true;
+    public static CompletableFuture<Boolean> teleportAndNormalizeDamageState(Player player, Location destination) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        player.teleportAsync(destination).thenAccept(success -> {
+            if (success) {
+                player.setInvulnerable(false);
+                player.setNoDamageTicks(0);
+            }
+            future.complete(success);
+        });
+
+        return future;
     }
 }

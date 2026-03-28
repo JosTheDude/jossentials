@@ -46,10 +46,14 @@ public final class WarpsTeleportService implements Listener {
         WarpsSettings current = settings;
         if (skipWarmup || !current.warmupEnabled() || player.hasPermission(current.bypassPermission())) {
             scheduler.runEntity(player, () -> {
-                if (TeleportUtil.teleportAndNormalizeDamageState(player, destination)) {
-                    String message = plugin.configs().messages().getString("messages.warp-teleported", "<green>Teleported to <gold>%warp%</gold>.");
-                    messageDispatcher.sendWithKey(player, "messages.warp-teleported", message.replace("%warp%", warpName));
-                }
+                TeleportUtil.teleportAndNormalizeDamageState(player, destination).thenAccept(success -> {
+                    if (success) {
+                        String message = plugin.configs().messages().getString("messages.warp-teleported", "<green>Teleported to <gold>%warp%</gold>.");
+                        messageDispatcher.sendWithKey(player, "messages.warp-teleported", message.replace("%warp%", warpName));
+                    } else {
+                        messageDispatcher.send(player, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                    }
+                });
             });
             return;
         }
@@ -80,10 +84,14 @@ public final class WarpsTeleportService implements Listener {
                 if (currentPlayer == null || !currentPlayer.isOnline()) {
                     return;
                 }
-                if (TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination())) {
-                    String message = plugin.configs().messages().getString("messages.warp-teleported", "<green>Teleported to <gold>%warp%</gold>.");
-                    messageDispatcher.sendWithKey(currentPlayer, "messages.warp-teleported", message.replace("%warp%", String.valueOf(pending.payload())));
-                }
+                TeleportUtil.teleportAndNormalizeDamageState(currentPlayer, pending.destination()).thenAccept(success -> {
+                    if (success) {
+                        String message = plugin.configs().messages().getString("messages.warp-teleported", "<green>Teleported to <gold>%warp%</gold>.");
+                        messageDispatcher.sendWithKey(currentPlayer, "messages.warp-teleported", message.replace("%warp%", String.valueOf(pending.payload())));
+                    } else {
+                        messageDispatcher.send(currentPlayer, "messages.admin-teleport-failed", "<red>Teleport failed.");
+                    }
+                });
             }
         );
     }
