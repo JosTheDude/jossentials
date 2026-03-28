@@ -56,10 +56,13 @@ commands:
     usage: /tp <player> [target]
   tppos:
     description: Teleport to coordinates, or teleport a player to coordinates.
-    usage: /tppos [player] <x> <y> <z> [world]
+    usage: /tppos <x> <y> <z> [player]
   near:
     description: List nearby players.
     usage: /near [radius]
+  fly:
+    description: Toggle flight for yourself or another player.
+    usage: /fly [player]
   speed:
     description: Change your walk or fly speed.
     usage: /speed <walk|fly> <speed>
@@ -185,6 +188,12 @@ permissions:
     default: op
   jossentials.near:
     description: List nearby players.
+    default: op
+  jossentials.fly:
+    description: Toggle your flight state.
+    default: op
+  jossentials.fly.others:
+    description: Toggle another player's flight state.
     default: op
   jossentials.speed:
     description: Change your walk or fly speed.

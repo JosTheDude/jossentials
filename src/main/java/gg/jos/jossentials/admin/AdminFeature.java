@@ -5,6 +5,7 @@ import gg.jos.jossentials.Jossentials;
 import gg.jos.jossentials.admin.command.NearCommand;
 import gg.jos.jossentials.admin.command.SeenCommand;
 import gg.jos.jossentials.admin.command.SpeedCommand;
+import gg.jos.jossentials.admin.command.FlyCommand;
 import gg.jos.jossentials.admin.command.TPCommand;
 import gg.jos.jossentials.admin.command.TPPosCommand;
 import gg.jos.jossentials.db.Database;
@@ -68,11 +69,13 @@ public final class AdminFeature implements Feature, Listener {
             commandManager.registerCommand(new TPCommand(this, messageDispatcher));
             commandManager.registerCommand(new TPPosCommand(this, messageDispatcher));
             commandManager.registerCommand(new NearCommand(this, messageDispatcher));
+            commandManager.registerCommand(new FlyCommand(this, messageDispatcher));
             commandManager.registerCommand(new SpeedCommand(this, messageDispatcher));
             commandManager.registerCommand(new SeenCommand(this, messageDispatcher));
             commandManager.getCommandCompletions().registerCompletion("seenplayers", context -> seenPlayerNames());
             commandManager.getCommandCompletions().registerCompletion("adminspeedtypes", context -> List.of("walk", "fly"));
             commandManager.getCommandCompletions().registerCompletion("adminspeedvalues", context -> speedValues());
+            commandManager.getCommandCompletions().registerCompletion("admintpposcoords", context -> tpPosCoordinateSuggestions());
             commandsRegistered = true;
         }
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -146,6 +149,7 @@ public final class AdminFeature implements Feature, Listener {
             "admin-tp-aliases", settings.tpAliasesReplacement(),
             "admin-tppos-aliases", settings.tpPosAliasesReplacement(),
             "admin-near-aliases", settings.nearAliasesReplacement(),
+            "admin-fly-aliases", settings.flyAliasesReplacement(),
             "admin-speed-aliases", settings.speedAliasesReplacement(),
             "admin-seen-aliases", settings.seenAliasesReplacement()
         );
@@ -164,5 +168,9 @@ public final class AdminFeature implements Feature, Listener {
             values.add(String.valueOf(i));
         }
         return values;
+    }
+
+    private List<String> tpPosCoordinateSuggestions() {
+        return List.of("~", "~1", "~-1", "0", "100", "-100");
     }
 }

@@ -25,9 +25,18 @@ messages:
       admin-tppos-self: message
       admin-tppos-other: message
       admin-tppos-received: message
+      admin-tppos-usage: message
+      admin-tppos-player-required: message
       admin-near-list: message
       admin-near-none: message
       admin-near-radius-invalid: message
+      admin-fly-player-required: message
+      admin-fly-enabled-self: message
+      admin-fly-disabled-self: message
+      admin-fly-enabled-other: message
+      admin-fly-disabled-other: message
+      admin-fly-enabled-received: message
+      admin-fly-disabled-received: message
       admin-speed-invalid-type: message
       admin-speed-invalid-range: message
       admin-speed-walk: message
@@ -216,12 +225,21 @@ messages:
   admin-tp-self: "<#a6e3a1>Teleported to <u>%target%</u>."
   admin-tp-other: "<#a6e3a1>Teleported <u>%player%</u> to <u>%target%</u>."
   admin-tp-received: "<#a6e3a1>You were teleported to <u>%target%</u>."
-  admin-tppos-self: "<#a6e3a1>Teleported to <u>%x% %y% %z%</u> in <u>%world%</u>."
-  admin-tppos-other: "<#a6e3a1>Teleported <u>%player%</u> to <u>%x% %y% %z%</u> in <u>%world%</u>."
-  admin-tppos-received: "<#a6e3a1>You were teleported to <u>%x% %y% %z%</u> in <u>%world%</u>."
+  admin-tppos-self: "<#a6e3a1>Teleported to <u>%x% %y% %z%</u>."
+  admin-tppos-other: "<#a6e3a1>Teleported <u>%player%</u> to <u>%x% %y% %z%</u>."
+  admin-tppos-received: "<#a6e3a1>You were teleported to <u>%x% %y% %z%</u>."
+  admin-tppos-usage: "<#f38ba8>Usage: <u>/tppos <x> <y> <z> [player]</u>"
+  admin-tppos-player-required: "<#f38ba8>Console must specify a player for <u>/tppos</u>."
   admin-near-list: "<#d3d3d3>Nearby players within <u>%radius%</u>: <#d3d3d3>%players%</#d3d3d3>."
   admin-near-none: "<#f9e2af>No players found within <u>%radius%</u> blocks."
   admin-near-radius-invalid: "<#f38ba8>Radius must be between <u>1</u> and <u>%max%</u>."
+  admin-fly-player-required: "<#f38ba8>Console must specify a player for <u>/fly</u>."
+  admin-fly-enabled-self: "<#a6e3a1>Flight enabled."
+  admin-fly-disabled-self: "<#f38ba8>Flight disabled."
+  admin-fly-enabled-other: "<#a6e3a1>Enabled flight for <u>%player%</u>."
+  admin-fly-disabled-other: "<#f38ba8>Disabled flight for <u>%player%</u>."
+  admin-fly-enabled-received: "<#a6e3a1>Your flight was enabled."
+  admin-fly-disabled-received: "<#f38ba8>Your flight was disabled."
   admin-speed-invalid-type: "<#f38ba8>Speed type must be <u>walk</u> or <u>fly</u>."
   admin-speed-invalid-range: "<#f38ba8>Speed must be between <u>0</u> and <u>%max%</u>."
   admin-speed-walk: "<#a6e3a1>Walk speed set to <u>%speed%</u>."
