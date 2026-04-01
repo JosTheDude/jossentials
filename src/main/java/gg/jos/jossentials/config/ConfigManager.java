@@ -18,6 +18,7 @@ public final class ConfigManager {
     private FileConfiguration warps;
     private FileConfiguration admin;
     private FileConfiguration messages;
+    private FileConfiguration qol;
 
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -34,6 +35,7 @@ public final class ConfigManager {
         warps = loadConfig("warps.yml", "warps");
         admin = loadConfig("admin.yml", "admin");
         messages = loadConfig("messages.yml", "messages");
+        qol = loadConfig("qol.yml", "qol");
     }
 
     public void reload() {
@@ -47,6 +49,7 @@ public final class ConfigManager {
         warps = loadConfig("warps.yml", "warps");
         admin = loadConfig("admin.yml", "admin");
         messages = loadConfig("messages.yml", "messages");
+        qol = loadConfig("qol.yml", "qol");
     }
 
     public FileConfiguration database() {
@@ -83,6 +86,10 @@ public final class ConfigManager {
 
     public FileConfiguration messages() {
         return messages;
+    }
+
+    public FileConfiguration qol() {
+        return qol;
     }
 
     public File spawnFile() {

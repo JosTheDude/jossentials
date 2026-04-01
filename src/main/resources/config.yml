@@ -11,6 +11,7 @@ config-files:
   - workbenches.yml
   - admin.yml
   - messages.yml
+  - qol.yml
 
 # database storage configuration
 database:
@@ -65,4 +66,7 @@ features:
     enabled: true
   admin:
     # enable or disable admin utility commands
+    enabled: true
+  qol:
+    # enable or disable qol commands
     enabled: true

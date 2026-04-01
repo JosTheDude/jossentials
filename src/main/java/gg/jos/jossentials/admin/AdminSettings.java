@@ -14,6 +14,7 @@ public final class AdminSettings {
     private final List<String> nearAliases;
     private final List<String> speedAliases;
     private final List<String> seenAliases;
+    private final List<String> gamemodeAliases;
     private final int defaultNearRadius;
     private final int maxNearRadius;
     private final int maxSpeed;
@@ -24,6 +25,7 @@ public final class AdminSettings {
         List<String> nearAliases,
         List<String> speedAliases,
         List<String> seenAliases,
+        List<String> gamemodeAliases,
         int defaultNearRadius,
         int maxNearRadius,
         int maxSpeed
@@ -33,6 +35,7 @@ public final class AdminSettings {
         this.nearAliases = nearAliases;
         this.speedAliases = speedAliases;
         this.seenAliases = seenAliases;
+        this.gamemodeAliases = gamemodeAliases;
         this.defaultNearRadius = defaultNearRadius;
         this.maxNearRadius = maxNearRadius;
         this.maxSpeed = maxSpeed;
@@ -49,6 +52,7 @@ public final class AdminSettings {
             aliases(config, "admin.commands.near.aliases", List.of("near")),
             aliases(config, "admin.commands.speed.aliases", List.of("speed")),
             aliases(config, "admin.commands.seen.aliases", List.of("seen", "lastseen")),
+            aliases(config, "admin.commands.gamemode.aliases", List.of("gamemode", "gm")),
             defaultNearRadius,
             maxNearRadius,
             maxSpeed
@@ -73,6 +77,10 @@ public final class AdminSettings {
 
     public List<String> seenAliases() {
         return seenAliases;
+    }
+
+    public List<String> gamemodeAliases() {
+        return gamemodeAliases;
     }
 
     public int defaultNearRadius() {
@@ -105,6 +113,10 @@ public final class AdminSettings {
 
     public String seenAliasesReplacement() {
         return String.join("|", seenAliases);
+    }
+
+    public String gamemodeAliasesReplacement() {
+        return String.join("|", gamemodeAliases);
     }
 
     private static List<String> aliases(FileConfiguration config, String path, List<String> defaults) {
