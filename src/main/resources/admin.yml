@@ -20,6 +20,10 @@ admin:
       aliases:
         - seen
         - lastseen
+    gamemode:
+        aliases:
+            - gamemode
+            - gm
 
   near:
     # default radius for /near

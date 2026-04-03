@@ -252,5 +252,11 @@ messages:
   admin-world-not-found: "<#f38ba8>World <u>%world%</u> was not found."
   admin-invalid-coordinates: "<#f38ba8>Invalid coordinates. Use numbers or relative coordinates like <u>~ ~1 ~-5</u>."
   admin-teleport-failed: "<#f38ba8>Teleport failed."
+  admin-gamemode-change:
+    creative: "<#a6e3a1>Game mode set to Creative."
+    survival: "<#a6e3a1>Game mode set to Survival."
+    adventure: "<#a6e3a1>Game mode set to Adventure."
+    spectator: "<#a6e3a1>Game mode set to Spectator."
   reload: "<#a6e3a1>Jossentials reloaded."
   feature-disabled: "<#f38ba8><i>This feature is disabled.</i>"
+  player-only: "<#f38ba8>Only players can use this command."

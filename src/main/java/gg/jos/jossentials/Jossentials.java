@@ -8,6 +8,7 @@ import gg.jos.jossentials.config.ConfigManager;
 import gg.jos.jossentials.feature.FeatureManager;
 import gg.jos.jossentials.fly.FlyFeature;
 import gg.jos.jossentials.homes.feature.HomesFeature;
+import gg.jos.jossentials.qol.feature.QOLFeature;
 import gg.jos.jossentials.spawn.SpawnFeature;
 import gg.jos.jossentials.tpa.feature.TPAFeature;
 import gg.jos.jossentials.util.MessageDispatcher;
@@ -46,6 +47,7 @@ public final class Jossentials extends JavaPlugin {
         featureManager.register(new TPAFeature(this, commandManager, messageDispatcher));
         featureManager.register(new WarpsFeature(this, database, commandManager, messageDispatcher));
         featureManager.register(new WorkbenchesFeature(this, commandManager, messageDispatcher));
+        featureManager.register(new QOLFeature(this, commandManager, messageDispatcher));
         featureManager.enableConfigured();
         commandManager.registerCommand(new ReloadCommand(this, featureManager, messageDispatcher));
 

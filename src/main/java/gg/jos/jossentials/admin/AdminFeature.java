@@ -2,11 +2,7 @@ package gg.jos.jossentials.admin;
 
 import co.aikar.commands.PaperCommandManager;
 import gg.jos.jossentials.Jossentials;
-import gg.jos.jossentials.admin.command.NearCommand;
-import gg.jos.jossentials.admin.command.SeenCommand;
-import gg.jos.jossentials.admin.command.SpeedCommand;
-import gg.jos.jossentials.admin.command.TPCommand;
-import gg.jos.jossentials.admin.command.TPPosCommand;
+import gg.jos.jossentials.admin.command.*;
 import gg.jos.jossentials.db.Database;
 import gg.jos.jossentials.feature.Feature;
 import gg.jos.jossentials.util.MessageDispatcher;
@@ -70,6 +66,7 @@ public final class AdminFeature implements Feature, Listener {
             commandManager.registerCommand(new NearCommand(this, messageDispatcher));
             commandManager.registerCommand(new SpeedCommand(this, messageDispatcher));
             commandManager.registerCommand(new SeenCommand(this, messageDispatcher));
+            commandManager.registerCommand(new GamemodeCommand(this, messageDispatcher));
             commandManager.getCommandCompletions().registerCompletion("seenplayers", context -> seenPlayerNames());
             commandManager.getCommandCompletions().registerCompletion("adminspeedtypes", context -> List.of("walk", "fly"));
             commandManager.getCommandCompletions().registerCompletion("adminspeedvalues", context -> speedValues());
@@ -148,7 +145,8 @@ public final class AdminFeature implements Feature, Listener {
             "admin-tppos-aliases", settings.tpPosAliasesReplacement(),
             "admin-near-aliases", settings.nearAliasesReplacement(),
             "admin-speed-aliases", settings.speedAliasesReplacement(),
-            "admin-seen-aliases", settings.seenAliasesReplacement()
+            "admin-seen-aliases", settings.seenAliasesReplacement(),
+            "admin-gamemode-aliases", settings.gamemodeAliasesReplacement()
         );
     }
 

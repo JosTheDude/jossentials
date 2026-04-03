@@ -12,6 +12,7 @@ config-files:
   - admin.yml
   - fly.yml
   - messages.yml
+  - qol.yml
 
 # database storage configuration
 database:
@@ -69,4 +70,7 @@ features:
     enabled: true
   fly:
     # enable or disable the fly feature
+    enabled: true
+  qol:
+    # enable or disable qol commands
     enabled: true
