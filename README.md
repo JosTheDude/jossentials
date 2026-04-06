@@ -1,0 +1,228 @@
+# Jossentials
+A modular, configurable, and extremely intuitive all-in-one command core for awesome Minecraft servers.
+
+- **Paper & Folia** compatible (API 1.21)
+- **SQLite** (default) or **MySQL** database storage
+- Every feature can be individually toggled on or off
+- All messages are fully customizable in `messages.yml`
+- Teleport warmup, move-cancel, and damage-cancel supported across all teleport features
+
+---
+
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| **Homes** | Per-player homes with a fully configurable GUI, slot-based permissions, and teleport warmup |
+| **Spawn** | Server spawn point with admin-set location, warmup, and player-send support |
+| **TPA** | Teleport request system with expiry, toggle, and warmup |
+| **Warps** | Admin-managed server warps with warmup and player-send support |
+| **Workbenches** | Open any crafting station (crafting table, anvil, furnace, etc.) via command |
+| **Fly** | Toggle flight for yourself or other players |
+| **Admin** | Staff utilities: `/tp`, `/tppos`, `/near`, `/speed`, `/seen`, `/gamemode` |
+| **QoL** | Quality-of-life commands like `/enderchest` |
+
+---
+
+## Commands & Permissions
+
+### Homes
+
+| Command | Description | Permission | Default |
+|---------|-------------|------------|---------|
+| `/homes [player]` | Open the homes GUI | `jossentials.homes.1`–`jossentials.homes.5` | false |
+| `/homes <player>` | View another player's homes | `jossentials.homes.others` | op |
+
+Home slot permissions grant access to individual slots. For example, giving a player `jossentials.homes.3` allows them to use home slots 1–3.
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `jossentials.homes.1` | Access to home slot 1 | false |
+| `jossentials.homes.2` | Access to home slot 2 | false |
+| `jossentials.homes.3` | Access to home slot 3 | false |
+| `jossentials.homes.4` | Access to home slot 4 | false |
+| `jossentials.homes.5` | Access to home slot 5 | false |
+| `jossentials.homes.others` | View another player's homes | op |
+| `jossentials.homes.teleport.bypass` | Bypass homes teleport warmup/cancel | op |
+
+---
+
+### Spawn
+
+| Command | Description | Permission | Default |
+|---------|-------------|------------|---------|
+| `/spawn [player]` | Teleport to spawn | `jossentials.spawn` | true |
+| `/spawn <player>` | Send another player to spawn | `jossentials.spawn.others` | op |
+| `/setspawn` | Set the server spawn point | `jossentials.setspawn` | op |
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `jossentials.spawn` | Teleport to spawn | true |
+| `jossentials.spawn.others` | Send another player to spawn | op |
+| `jossentials.setspawn` | Set the server spawn | op |
+| `jossentials.spawn.teleport.bypass` | Bypass spawn teleport warmup/cancel | op |
+
+---
+
+### TPA (Teleport Requests)
+
+| Command | Aliases | Description | Permission | Default |
+|---------|---------|-------------|------------|---------|
+| `/tpa <player>` | `/tpask` | Request to teleport to a player | `jossentials.tpa` | true |
+| `/tpahere <player>` | — | Request a player to teleport to you | `jossentials.tpa.here` | true |
+| `/tpaccept [player]` | `/tpyes` | Accept a teleport request | `jossentials.tpa.accept` | true |
+| `/tpdeny [player]` | `/tpno` | Deny a teleport request | `jossentials.tpa.deny` | true |
+| `/tpcancel` | — | Cancel your outgoing teleport request | `jossentials.tpa.cancel` | true |
+| `/tptoggle` | — | Toggle incoming teleport requests | `jossentials.tpa.toggle` | true |
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `jossentials.tpa` | Send a teleport request | true |
+| `jossentials.tpa.here` | Send a teleport-here request | true |
+| `jossentials.tpa.accept` | Accept teleport requests | true |
+| `jossentials.tpa.deny` | Deny teleport requests | true |
+| `jossentials.tpa.cancel` | Cancel outgoing requests | true |
+| `jossentials.tpa.toggle` | Toggle incoming requests | true |
+| `jossentials.tpa.teleport.bypass` | Bypass TPA teleport warmup/cancel | op |
+
+---
+
+### Warps
+
+| Command | Aliases | Description | Permission | Default |
+|---------|---------|-------------|------------|---------|
+| `/warp <name> [player]` | — | Teleport to a warp | `jossentials.warp` | true |
+| `/warps` | — | List available warps | `jossentials.warps` | true |
+| `/setwarp <name>` | — | Create or update a warp | `jossentials.setwarp` | op |
+| `/delwarp <name>` | `/deletewarp` | Delete a warp | `jossentials.delwarp` | op |
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `jossentials.warp` | Teleport to a warp | true |
+| `jossentials.warps` | List warps | true |
+| `jossentials.setwarp` | Create/update warps | op |
+| `jossentials.delwarp` | Delete warps | op |
+| `jossentials.warp.others` | Send another player to a warp | op |
+| `jossentials.warp.teleport.bypass` | Bypass warp teleport warmup/cancel | op |
+
+---
+
+### Workbenches
+
+Open any crafting station anywhere — no block required.
+
+| Command | Aliases | Workbench | Permission | Default |
+|---------|---------|-----------|------------|---------|
+| `/craft` | `/crafting`, `/craftingtable`, `/wb`, `/workbench` | Crafting Table | `jossentials.workbench.crafting_table` | true |
+| `/anvil` | — | Anvil | `jossentials.workbench.anvil` | true |
+| `/cartography` | `/cartographytable` | Cartography Table | `jossentials.workbench.cartography_table` | true |
+| `/grindstone` | — | Grindstone | `jossentials.workbench.grindstone` | true |
+| `/loom` | — | Loom | `jossentials.workbench.loom` | true |
+| `/smithing` | `/smithingtable` | Smithing Table | `jossentials.workbench.smithing_table` | true |
+| `/stonecutter` | — | Stonecutter | `jossentials.workbench.stonecutter` | true |
+| `/enchantingtable` | — | Enchanting Table | `jossentials.workbench.enchanting_table` | true |
+
+Each workbench can be individually disabled and its command aliases reconfigured in `workbenches.yml`.
+
+---
+
+### Fly
+
+| Command | Description | Permission | Default |
+|---------|-------------|------------|---------|
+| `/fly [player]` | Toggle flight for yourself | `jossentials.fly` | op |
+| `/fly <player>` | Toggle flight for another player | `jossentials.fly.others` | op |
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `jossentials.fly` | Toggle your own flight | op |
+| `jossentials.fly.others` | Toggle another player's flight | op |
+
+---
+
+### Admin Utilities
+
+| Command | Aliases | Description | Permission | Default |
+|---------|---------|-------------|------------|---------|
+| `/tp <player> [target]` | `/teleport` | Teleport to a player (or one player to another) | `jossentials.tp` / `jossentials.tp.others` | op |
+| `/tppos <x> <y> <z> [player]` | `/teleportpos` | Teleport to coordinates | `jossentials.tppos` / `jossentials.tppos.others` | op |
+| `/near [radius]` | — | List players within a radius (default: 40, max: 200) | `jossentials.near` | op |
+| `/speed <walk\|fly> <speed>` | — | Set walk or fly speed (0–10) | `jossentials.speed` | op |
+| `/seen <player>` | `/lastseen` | Check when a player was last online | `jossentials.seen` | op |
+| `/gamemode creative` | `/gmc` | Switch to Creative mode | `jossentials.gamemode.creative` | op |
+| `/gamemode survival` | `/gms` | Switch to Survival mode | `jossentials.gamemode.survival` | op |
+| `/gamemode adventure` | `/gma` | Switch to Adventure mode | `jossentials.gamemode.adventure` | op |
+| `/gamemode spectator` | `/gmsp` | Switch to Spectator mode | `jossentials.gamemode.spectator` | op |
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `jossentials.tp` | Teleport to a player | op |
+| `jossentials.tp.others` | Teleport one player to another | op |
+| `jossentials.tppos` | Teleport to coordinates | op |
+| `jossentials.tppos.others` | Teleport another player to coordinates | op |
+| `jossentials.near` | List nearby players | op |
+| `jossentials.speed` | Change walk or fly speed | op |
+| `jossentials.seen` | Check last-seen data | op |
+| `jossentials.gamemode.creative` | Switch to Creative | op |
+| `jossentials.gamemode.survival` | Switch to Survival | op |
+| `jossentials.gamemode.adventure` | Switch to Adventure | op |
+| `jossentials.gamemode.spectator` | Switch to Spectator | op |
+
+---
+
+### Quality of Life
+
+| Command | Aliases | Description | Permission | Default |
+|---------|---------|-------------|------------|---------|
+| `/enderchest` | `/ec`, `/echest` | Open your ender chest anywhere | `jossentials.enderchest` | — |
+
+---
+
+### Plugin Management
+
+| Command | Aliases | Description | Permission | Default |
+|---------|---------|-------------|------------|---------|
+| `/jossentials reload` | `/joss`, `/jessentials` | Reload all configuration files | `jossentials.reload` | op |
+
+---
+
+## Configuration
+
+Jossentials uses a multi-file configuration layout. Each feature has its own config file:
+
+| File | Purpose |
+|------|---------|
+| `config.yml` | Global settings, database config, feature toggles |
+| `homes.yml` | Homes GUI layout, teleport warmup, slot settings |
+| `spawn.yml` | Spawn location and teleport warmup |
+| `tpa.yml` | TPA request expiry and teleport warmup |
+| `warps.yml` | Warp teleport warmup |
+| `workbenches.yml` | Per-workbench enable/disable and command aliases |
+| `fly.yml` | Fly command aliases |
+| `admin.yml` | Admin command aliases, `/near` radius limits, `/speed` max |
+| `qol.yml` | Toggle QoL commands like `/enderchest` |
+| `messages.yml` | All player-facing messages, delivery type (chat/actionbar/title), sounds |
+
+### Database
+
+Jossentials supports **SQLite** (default) and **MySQL** for persistent data storage (homes, warps, seen data). Configure in `config.yml` under the `database` section.
+
+### Teleport Warmup
+
+All teleport features (homes, spawn, TPA, warps) support a configurable warmup period with optional cancellation on movement or damage. Operators and players with the appropriate bypass permission skip the warmup entirely.
+
+---
+
+## Installation
+
+1. Download the latest `Jossentials.jar` and place it in your server's `plugins/` folder.
+2. Restart the server to generate the configuration files.
+3. Edit `plugins/Jossentials/config.yml` to configure the database and enable/disable features.
+4. Use `/jossentials reload` to apply configuration changes without restarting.
+
+---
+
+## Requirements
+
+- **Paper** or **Folia** 1.21+
+- **Java** 21+
