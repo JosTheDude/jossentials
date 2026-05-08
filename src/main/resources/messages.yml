@@ -138,6 +138,22 @@ messages:
         name: BLOCK_NOTE_BLOCK_BASS
         volume: 0.8
         pitch: 0.6
+      back-teleported:
+        name: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.7
+        pitch: 1.0
+      back-teleport-warmup:
+        name: BLOCK_NOTE_BLOCK_CHIME
+        volume: 0.6
+        pitch: 1.2
+      back-teleport-cancelled:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
+      back-not-available:
+        name: BLOCK_NOTE_BLOCK_BASS
+        volume: 0.8
+        pitch: 0.6
       spawn-not-set:
         name: BLOCK_NOTE_BLOCK_BASS
         volume: 0.8
@@ -208,6 +224,10 @@ messages:
   spawn-teleport-cancelled: "<#f38ba8>Teleport cancelled."
   spawn-not-set: "<#f38ba8>Spawn has not been set yet."
   spawn-other-sent: "<#a6e3a1>Sent <u>%player%</u> to spawn."
+  back-teleported: "<#a6e3a1>Teleported back."
+  back-teleport-warmup: "<#d3d3d3>Teleporting back in <u>%seconds%s</u>..."
+  back-teleport-cancelled: "<#f38ba8>Teleport cancelled."
+  back-not-available: "<#f38ba8>You do not have a back location available."
   warp-loading: "<#d3d3d3>Loading warps..."
   warp-name-invalid: "<#f38ba8>That warp name is invalid."
   warp-not-found: "<#f38ba8>Warp <u>%warp%</u> not found."

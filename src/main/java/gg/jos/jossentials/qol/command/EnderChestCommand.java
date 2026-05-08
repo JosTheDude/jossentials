@@ -19,6 +19,10 @@ public class EnderChestCommand extends JossCommand<QOLFeature> {
     @Default
     public void def(CommandSender sender) {
         if (!featureEnabled(sender)) return;
+        if (!feature.isEnderChestCommandEnabled()) {
+            messageDispatcher.send(sender, "messages.feature-disabled", "<red>This feature is disabled.");
+            return;
+        }
         if (!playerOnly(sender)) return;
         if (!permission(sender, "jossentials.enderchest")) return;
 

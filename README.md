@@ -20,7 +20,7 @@ A modular, configurable, and extremely intuitive all-in-one command core for awe
 | **Workbenches** | Open any crafting station (crafting table, anvil, furnace, etc.) via command |
 | **Fly** | Toggle flight for yourself or other players |
 | **Admin** | Staff utilities: `/tp`, `/tppos`, `/near`, `/speed`, `/seen`, `/gamemode` |
-| **QoL** | Quality-of-life commands like `/enderchest` |
+| **QoL** | Quality-of-life commands like `/enderchest` and `/back` |
 
 ---
 
@@ -174,7 +174,8 @@ Each workbench can be individually disabled and its command aliases reconfigured
 
 | Command | Aliases | Description | Permission | Default |
 |---------|---------|-------------|------------|---------|
-| `/enderchest` | `/ec`, `/echest` | Open your ender chest anywhere | `jossentials.enderchest` | — |
+| `/enderchest` | `/ec`, `/echest` | Open your ender chest anywhere | `jossentials.enderchest` | op       |
+| `/back` | — | Return to your previous teleport or death location | `jossentials.back` | op      |
 
 ---
 
@@ -200,7 +201,7 @@ Jossentials uses a multi-file configuration layout. Each feature has its own con
 | `workbenches.yml` | Per-workbench enable/disable and command aliases |
 | `fly.yml` | Fly command aliases |
 | `admin.yml` | Admin command aliases, `/near` radius limits, `/speed` max |
-| `qol.yml` | Toggle QoL commands like `/enderchest` |
+| `qol.yml` | Toggle QoL commands like `/enderchest` and configure `/back` |
 | `messages.yml` | All player-facing messages, delivery type (chat/actionbar/title), sounds |
 
 ### Database

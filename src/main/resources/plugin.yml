@@ -28,6 +28,9 @@ commands:
     description: Accept a teleport request.
     usage: /tpaccept [player]
     aliases: [tpyes]
+  back:
+    description: Return to your previous location.
+    usage: /back
   tpdeny:
     description: Deny a teleport request.
     usage: /tpdeny [player]
@@ -129,6 +132,12 @@ permissions:
   jossentials.spawn.others:
     description: Send another player to spawn.
     default: op
+  jossentials.back:
+    description: Return to your previous location.
+    default: op
+  jossentials.back.teleport.bypass:
+    description: Bypass back teleport warmup/cancel checks.
+    default: op
   jossentials.warp:
     description: Teleport to a warp.
     default: true
@@ -170,6 +179,9 @@ permissions:
     default: true
   jossentials.workbench.enchanting_table:
     description: Open the enchanting table workbench.
+    default: true
+  jossentials.enderchest:
+    description: Open your ender chest anywhere.
     default: true
   jossentials.reload:
     description: Reload Jossentials configuration.
