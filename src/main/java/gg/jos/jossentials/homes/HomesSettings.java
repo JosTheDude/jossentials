@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 public final class HomesSettings implements WarmupSettings {
+    public final int maxSlots;
     public final boolean deleteConfirmationEnabled;
     public final int deleteConfirmationWindowSeconds;
     public final int deleteToSetDelayMillis;
@@ -21,13 +22,14 @@ public final class HomesSettings implements WarmupSettings {
     private final EnumSet<ClickType> teleportClicks;
     private final EnumSet<ClickType> deleteClicks;
 
-    public HomesSettings(boolean deleteConfirmationEnabled, int deleteConfirmationWindowSeconds,
+    public HomesSettings(int maxSlots, boolean deleteConfirmationEnabled, int deleteConfirmationWindowSeconds,
                          int deleteToSetDelayMillis,
                          boolean warmupEnabled, int warmupSeconds,
                          boolean cancelOnMove, boolean cancelOnDamage,
                          double movementThreshold, String bypassPermission,
                          EnumSet<ClickType> setClicks, EnumSet<ClickType> teleportClicks,
                          EnumSet<ClickType> deleteClicks) {
+        this.maxSlots = Math.max(1, maxSlots);
         this.deleteConfirmationEnabled = deleteConfirmationEnabled;
         this.deleteConfirmationWindowSeconds = deleteConfirmationWindowSeconds;
         this.deleteToSetDelayMillis = Math.max(0, deleteToSetDelayMillis);
@@ -43,6 +45,7 @@ public final class HomesSettings implements WarmupSettings {
     }
 
     public static HomesSettings fromConfig(FileConfiguration config) {
+        int maxSlots = config.getInt("homes.max-slots", 10);
         boolean deleteConfirmationEnabled = config.getBoolean("homes.delete-confirmation.enabled", true);
         int deleteConfirmationWindowSeconds = config.getInt("homes.delete-confirmation.window-seconds", 5);
         int deleteToSetDelayMillis = config.getInt("homes.delete-to-set-delay-ms", 750);
@@ -57,6 +60,7 @@ public final class HomesSettings implements WarmupSettings {
         EnumSet<ClickType> deleteClicks = readClickTypes(config, "homes.gui.actions.delete", EnumSet.of(ClickType.RIGHT));
 
         return new HomesSettings(
+            maxSlots,
             deleteConfirmationEnabled,
             deleteConfirmationWindowSeconds,
             deleteToSetDelayMillis,

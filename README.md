@@ -13,7 +13,7 @@ A modular, configurable, and extremely intuitive all-in-one command core for awe
 
 | Feature | Description |
 |---------|-------------|
-| **Homes** | Per-player homes with a fully configurable GUI, slot-based permissions, and teleport warmup |
+| **Homes** | Per-player homes with a fully configurable paginated GUI, slot-based permissions, and teleport warmup |
 | **Spawn** | Server spawn point with admin-set location, warmup, and player-send support |
 | **TPA** | Teleport request system with expiry, toggle, and warmup |
 | **Warps** | Admin-managed server warps with warmup and player-send support |
@@ -30,10 +30,12 @@ A modular, configurable, and extremely intuitive all-in-one command core for awe
 
 | Command | Description | Permission | Default |
 |---------|-------------|------------|---------|
-| `/homes [player]` | Open the homes GUI | `jossentials.homes.1`–`jossentials.homes.5` | false |
+| `/homes [player]` | Open the homes GUI | `jossentials.homes.1`–`jossentials.homes.10` | false |
 | `/homes <player>` | View another player's homes | `jossentials.homes.others` | op |
 
 Home slot permissions grant access to individual slots. For example, giving a player `jossentials.homes.3` allows them to use home slots 1–3.
+
+The default homes UI is split into two pages of five homes each. Page-specific item overrides live under `homes.gui.pages.page-1.items` and `homes.gui.pages.page-2.items`, so you can give the second page its own lore without changing page 1.
 
 | Permission | Description | Default |
 |------------|-------------|---------|
@@ -42,6 +44,11 @@ Home slot permissions grant access to individual slots. For example, giving a pl
 | `jossentials.homes.3` | Access to home slot 3 | false |
 | `jossentials.homes.4` | Access to home slot 4 | false |
 | `jossentials.homes.5` | Access to home slot 5 | false |
+| `jossentials.homes.6` | Access to home slot 6 | false |
+| `jossentials.homes.7` | Access to home slot 7 | false |
+| `jossentials.homes.8` | Access to home slot 8 | false |
+| `jossentials.homes.9` | Access to home slot 9 | false |
+| `jossentials.homes.10` | Access to home slot 10 | false |
 | `jossentials.homes.others` | View another player's homes | op |
 | `jossentials.homes.teleport.bypass` | Bypass homes teleport warmup/cancel | op |
 

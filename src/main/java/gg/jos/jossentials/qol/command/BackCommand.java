@@ -1,0 +1,30 @@
+package gg.jos.jossentials.qol.command;
+
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Default;
+import gg.jos.jossentials.command.helper.JossCommand;
+import gg.jos.jossentials.qol.feature.QOLFeature;
+import gg.jos.jossentials.util.MessageDispatcher;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+@CommandAlias("back")
+public final class BackCommand extends JossCommand<QOLFeature> {
+
+    public BackCommand(QOLFeature feature, MessageDispatcher messageDispatcher) {
+        super(feature, messageDispatcher);
+    }
+
+    @Default
+    public void def(CommandSender sender) {
+        if (!featureEnabled(sender)) return;
+        if (!playerOnly(sender)) return;
+        if (!feature.isBackCommandEnabled()) {
+            messageDispatcher.send(sender, "messages.feature-disabled", "<red>This feature is disabled.");
+            return;
+        }
+        if (!permission(sender, "jossentials.back")) return;
+
+        feature.teleportBack((Player) sender);
+    }
+}

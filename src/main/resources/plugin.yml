@@ -93,6 +93,21 @@ permissions:
   jossentials.homes.5:
     description: Access to home slot 5.
     default: false
+  jossentials.homes.6:
+    description: Access to home slot 6.
+    default: false
+  jossentials.homes.7:
+    description: Access to home slot 7.
+    default: false
+  jossentials.homes.8:
+    description: Access to home slot 8.
+    default: false
+  jossentials.homes.9:
+    description: Access to home slot 9.
+    default: false
+  jossentials.homes.10:
+    description: Access to home slot 10.
+    default: false
   jossentials.homes.teleport.bypass:
     description: Bypass homes teleport warmup/cancel checks.
     default: op

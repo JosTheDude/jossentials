@@ -22,12 +22,22 @@ public final class HomesItemFactory {
     }
 
     public ItemProvider create(String path, int slot, String permission) {
-        String cacheKey = path + "|" + slot + "|" + permission;
+        return create(new String[]{path}, slot, permission);
+    }
+
+    public ItemProvider create(String[] paths, int slot, String permission) {
+        String cacheKey = String.join("->", paths) + "|" + slot + "|" + permission;
         ItemProvider cached = cache.get(cacheKey);
         if (cached != null) {
             return cached;
         }
-        ConfigurationSection section = plugin.configs().homes().getConfigurationSection(path);
+        ConfigurationSection section = null;
+        for (String path : paths) {
+            section = plugin.configs().homes().getConfigurationSection(path);
+            if (section != null) {
+                break;
+            }
+        }
         if (section == null) {
             return ItemProvider.EMPTY;
         }

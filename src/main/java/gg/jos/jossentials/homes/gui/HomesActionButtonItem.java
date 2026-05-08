@@ -27,13 +27,15 @@ public final class HomesActionButtonItem extends AbstractItem {
     private final DeleteConfirmationManager deleteConfirmationManager;
     private final HomesSettings settings;
     private final HomesSlotItem iconItem;
+    private final String pageItemsPath;
 
     public HomesActionButtonItem(Jossentials plugin, HomesService homesService, HomesItemFactory itemFactory,
                                  Player player, java.util.UUID playerId, int slot, String permission, Map<Integer, HomeLocation> homes,
                                  gg.jos.jossentials.util.MessageDispatcher messageDispatcher,
                                  DeleteConfirmationManager deleteConfirmationManager,
                                  HomesSettings settings,
-                                 HomesSlotItem iconItem) {
+                                 HomesSlotItem iconItem,
+                                 String pageItemsPath) {
         this.plugin = plugin;
         this.homesService = homesService;
         this.itemFactory = itemFactory;
@@ -46,26 +48,27 @@ public final class HomesActionButtonItem extends AbstractItem {
         this.deleteConfirmationManager = deleteConfirmationManager;
         this.settings = settings;
         this.iconItem = iconItem;
+        this.pageItemsPath = pageItemsPath;
     }
 
     @Override
     public ItemProvider getItemProvider(Player viewer) {
         if (!player.hasPermission(permission)) {
-            return itemFactory.create("homes.gui.items.action-locked", slot, permission);
+            return itemFactory.create(paths("action-locked", "homes.gui.items.action-locked"), slot, permission);
         }
 
         HomeLocation location = homes.get(slot);
         if (location == null) {
-            return itemFactory.create("homes.gui.items.action-set", slot, permission);
+            return itemFactory.create(paths("action-set", "homes.gui.items.action-set"), slot, permission);
         }
 
         if (settings.deleteConfirmationEnabled) {
             long windowMillis = settings.deleteConfirmationWindowSeconds * 1000L;
             if (deleteConfirmationManager.isPending(player.getUniqueId(), slot, windowMillis)) {
-                return itemFactory.create("homes.gui.items.action-delete-confirm", slot, permission);
+                return itemFactory.create(paths("action-delete-confirm", "homes.gui.items.action-delete-confirm"), slot, permission);
             }
         }
-        return itemFactory.create("homes.gui.items.action-delete", slot, permission);
+        return itemFactory.create(paths("action-delete", "homes.gui.items.action-delete"), slot, permission);
     }
 
     @Override
@@ -149,5 +152,12 @@ public final class HomesActionButtonItem extends AbstractItem {
     private void refreshAll() {
         notifyWindows();
         iconItem.refresh();
+    }
+
+    private String[] paths(String key, String fallback) {
+        if (pageItemsPath == null || pageItemsPath.isBlank()) {
+            return new String[]{fallback};
+        }
+        return new String[]{pageItemsPath + "." + key, fallback};
     }
 }

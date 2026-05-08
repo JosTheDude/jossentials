@@ -12,6 +12,10 @@ import xyz.xenondevs.invui.item.ItemProvider;
 import java.util.Map;
 
 public final class HomesSlotItem extends AbstractItem {
+    private static final String[] LOCKED_PATHS = {"homes.gui.items.locked"};
+    private static final String[] LOCKED_SET_PATHS = {"homes.gui.items.locked-set"};
+    private static final String[] EMPTY_PATHS = {"homes.gui.items.empty"};
+    private static final String[] SET_PATHS = {"homes.gui.items.set"};
     private final HomesItemFactory itemFactory;
     private final Player viewer;
     private final boolean readOnly;
@@ -21,12 +25,14 @@ public final class HomesSlotItem extends AbstractItem {
     private final gg.jos.jossentials.util.MessageDispatcher messageDispatcher;
     private final HomesTeleportService teleportService;
     private final HomesSettings settings;
+    private final String pageItemsPath;
 
     public HomesSlotItem(HomesItemFactory itemFactory,
                          Player viewer, boolean readOnly, int slot, String permission, Map<Integer, HomeLocation> homes,
                          gg.jos.jossentials.util.MessageDispatcher messageDispatcher,
                          HomesTeleportService teleportService,
-                         HomesSettings settings) {
+                         HomesSettings settings,
+                         String pageItemsPath) {
         this.itemFactory = itemFactory;
         this.viewer = viewer;
         this.readOnly = readOnly;
@@ -36,6 +42,7 @@ public final class HomesSlotItem extends AbstractItem {
         this.messageDispatcher = messageDispatcher;
         this.teleportService = teleportService;
         this.settings = settings;
+        this.pageItemsPath = pageItemsPath;
     }
 
     @Override
@@ -43,15 +50,15 @@ public final class HomesSlotItem extends AbstractItem {
         HomeLocation location = homes.get(slot);
         boolean hasPermission = readOnly || this.viewer.hasPermission(permission);
         if (location != null && !hasPermission) {
-            return itemFactory.create("homes.gui.items.locked-set", slot, permission);
+            return itemFactory.create(paths("locked-set", LOCKED_SET_PATHS[0]), slot, permission);
         }
         if (!hasPermission) {
-            return itemFactory.create("homes.gui.items.locked", slot, permission);
+            return itemFactory.create(paths("locked", LOCKED_PATHS[0]), slot, permission);
         }
         if (location == null) {
-            return itemFactory.create("homes.gui.items.empty", slot, permission);
+            return itemFactory.create(paths("empty", EMPTY_PATHS[0]), slot, permission);
         }
-        return itemFactory.create("homes.gui.items.set", slot, permission);
+        return itemFactory.create(paths("set", SET_PATHS[0]), slot, permission);
     }
 
     @Override
@@ -81,5 +88,12 @@ public final class HomesSlotItem extends AbstractItem {
 
     public void refresh() {
         notifyWindows();
+    }
+
+    private String[] paths(String key, String fallback) {
+        if (pageItemsPath == null || pageItemsPath.isBlank()) {
+            return new String[]{fallback};
+        }
+        return new String[]{pageItemsPath + "." + key, fallback};
     }
 }
